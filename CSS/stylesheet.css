@@ -1,0 +1,434 @@
+/*
+
+font-family: 'Montserrat', sans-serif;
+font-family: 'Raleway', sans-serif;
+font-family: 'Quicksand', sans-serif;
+font-family: 'Open Sans', sans-serif;
+
+ */
+
+body {
+    margin: 0;
+    padding: 0;
+}
+#cabecera {
+    width: 100%;
+    height: 100px;
+    max-height: 100px;
+    background-color: #114511;
+    color: white;
+    box-sizing:border-box;
+    text-align: center;
+}
+#cabecera h1 {
+    float: left;
+    margin-top: 23px;
+    margin-left: 40px;
+    font-size: 40px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: initial;
+    color: white;
+}
+#cabecera #idiomas {
+    float: right;
+}
+#idiomas img {
+    margin-top: 22px;
+    margin-right: 10px;
+    width: 25px;
+    cursor: pointer;
+}
+#cabecera input {
+    float: right;
+    margin-right: 15px;
+    margin-top: 30px;
+    background-color: #114511;
+    border: 2px solid forestgreen;
+    color: white;
+    width: 150px;
+    height: 40px;
+    cursor: pointer;
+}
+#cabecera input:hover {
+    background-color: forestgreen;
+    transition: 0.3s ease-in;
+}
+#cabecera h1 img {
+    width: 19px;
+    cursor: initial;
+}
+#user {
+    font-size: 20px;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    padding-top: 10px;
+    align-items: center;
+    float: right;
+    margin-right: 50px;
+}
+#user img {
+    height: 80px;
+    margin-right: auto;
+    display: block;
+    margin-left: -10px;
+
+}
+#idiomas input[type=button] {
+    width: 30px;
+    height: 20px;
+}
+#idiomas input[type=button]:first-child {
+    background: url(../IMGs/spanish.png);
+}
+#confirmar {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    top: 25%;
+    border: 1px solid darkgrey;
+    padding:0;
+    z-index: 10;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 400px;
+    text-align: center;
+}
+.formulario{
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    top: 3.5%;
+    border: 1px solid darkgrey;
+    padding:0;
+    z-index: 10;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 400px;
+    text-align: center;
+}
+.formulario input[type=file] {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.formulario input[type=file] + label {
+    background-color: limegreen;
+    border: 1px solid forestgreen;
+    display: inline-block;
+    padding: 10px 30px;
+    color: white;
+    cursor: pointer;
+}
+.formulario p {
+    text-align: left;
+    margin-left: 75px;
+}
+#activo {
+    background-color: white;
+    border: none;
+}
+.opciones {
+    width: 200px;
+    height: 50px;
+}
+.formulario input[type=submit] {
+    width: 200px;
+    height: 40px;
+    margin: 20px 100px 30px;
+    background-color: limegreen;
+    border: 1px solid forestgreen;
+    color: white;
+    font-size: 1.2em;
+}
+.formulario input[type=submit]:disabled {
+    border: 1px solid red;
+    background-color: coral;
+}
+.formulario input[type=radio] {
+    margin-top: 20px;
+}
+#sign_up input[type=text], #log_in input[type=text] {
+    width: 250px;
+}
+.formulario input[type=password], .formulario input[type=password] {
+    width: 250px;
+}
+#difuminador {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.5);
+    top: 0;
+    left: 0;
+}
+#info {
+    width: 50%;
+    margin-left: 10%;
+    margin-top: 50px;
+    background-color: lightblue;
+    position: absolute;
+    text-align: left;
+}
+#info #datos {
+    padding-top: 15px;
+    padding-bottom: 25px;
+    padding-right: 75px;
+    font-family: Calibri;
+}
+#info #datos h2 {
+    font-size: 40px;
+    margin-bottom: 0;
+
+}
+#info img {
+    width: 350px;
+    float: left;
+    padding-right: 40px;
+}
+#info #equipo {
+    width: 150px;
+    position: absolute;
+    left: 140%;
+    top: 10%;
+}
+#info #datos h3 {
+    font-size: 20px;
+    margin-bottom: 0;
+    margin-left: 0;
+
+}
+#info #datos h3 img {
+    height: 20px;
+    width: auto;
+    margin-right: 0;
+    padding-right: 10px;
+}
+#info input {
+    background-color: #114511;
+    border: 2px solid forestgreen;
+    color: white;
+    width: 20%;
+    height: 40px;
+    cursor: pointer;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 10%;
+}
+#calendario {
+    clear: both;
+    margin-top: 100px;
+}
+#calendario table, td, tr, th {
+    border: 1px solid black;
+}
+
+#calendario table {
+    border-collapse: collapse;
+}
+#calendario td, th {
+    padding: 20px;
+}
+#calendario th {
+    background-color: lightgrey;
+}
+#calendario_re {
+    clear: both;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    box-shadow: 0 4px 8px 0 rgba(0,0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#botones_reserva {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+#botones_reserva button {
+    background-color: #114511;
+    border: 2px solid forestgreen;
+    color: white;
+    width: 200px;
+    height: 40px;
+    cursor: pointer;
+}
+#botones_reserva #selected {
+    border: 2px solid #114511;
+    background-color: forestgreen;
+    color: white;
+    width: 200px;
+    height: 40px;
+    cursor: pointer;
+}
+#calendario_re table, td, tr, th {
+    border: 1px solid black;
+}
+
+#calendario_re table {
+    border-collapse: collapse;
+}
+#calendario_re td, th {
+    padding: 20px;
+}
+#calendario_re th {
+    background-color: lightgrey;
+}
+#calendario_re td {
+    cursor: pointer;
+}
+#calendario_re .reservado {
+    background-color: coral;
+    color: red;
+    cursor: initial;
+}
+#calendario_re .reservado2 {
+    background-color: lightblue;
+    color: darkblue;
+}
+#form_mod {
+    all:initial;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%,0);
+    border: 1px solid darkgrey;
+    padding: 20px 60px;
+    box-shadow: 0 4px 8px 0 rgba(0,0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#form_mod input[type=text], #form_mod input[type=password] {
+    width: 300px;
+}
+#form_mod input[type=submit], #form_mod input[type=button] {
+    width: 200px;
+    margin-left: 50px;
+    height: 30px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+.date {
+    vertical-align: top;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+#calendario {
+    padding: 0;
+    margin-top: 100px;
+}
+#calendario img {
+    width: 30px;
+    margin-right: 0;
+    padding-right: 0;
+    float:left;
+}
+#calendario i {
+    float:left;
+    font-size: 10px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+#calendario table {
+    padding: 0;
+    background-color: white;
+}
+#calendario table tr {
+    margin:0;
+    padding: 0;
+
+}
+#calendario table tr td {
+    padding:0;
+    width: 100px;
+    height: 100px;
+    vertical-align: top;
+    align-items: center;
+}
+#calendario .partido div {
+    display: flex;
+    align-items: center;
+    margin-left: 6px;
+}
+#calendario a {
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    height: 100%;
+    width: 100%;
+}
+#calendario a p:first-child {
+    text-align: left;
+}
+#calendario button {
+    width: 100%;
+    height: 30px;
+    border: none;
+    background-color: lightgrey;
+}
+#liga, table, tr, td {
+    border: 1px solid black;
+}
+#liga {
+    border-collapse: collapse;
+    position: absolute;
+    top: 25%;
+    left: 10%;
+    text-align: center;
+    font-size: 2em;
+    box-shadow: 0 4px 8px 0 rgba(0,0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin-bottom: 30px;
+}
+#liga td {
+    padding: 10px 20px;
+}
+#liga tr td:nth-child(1) {
+    border-right: none;
+}
+#liga tr td:nth-child(2) {
+    border-left: none;
+}
+#liga img {
+    height: 50px;
+}
+#texto-index img {
+    margin-left: 5%;
+}
+#texto_index {
+    position: absolute;
+    left: 50%;
+    top: 21%;
+    width: 40%;
+    text-align: justify;
+}
+#texto_index h1, h2 {
+    text-align: center;
+    color: black;
+}
+#content_partido {
+    color: black;
+}
+#content_partido table img {
+    width: 255px;
+    margin-top: 50px;
+}
+#content_partido b {
+    font-size: 75px;
+    font-family: 'Montserrat', sans-serif;
+}
+#content_partido table, #content_partido tr, #content_partido td {
+    border: none;
+    text-align: center;
+}
+#content_partido td:first-child, #content_partido td:last-child{
+    padding: 20px 150px;
+    font-size: 50px;
+}
+#content_partido img {
+    width: 200px;
+}
+#content_partido p:first-child {
+    float: left;
+}
