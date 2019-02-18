@@ -100,24 +100,9 @@ class Arbitro {
             $parameters3_2 = [':puntos'=>$puntos[1]['puntos']+1, ':nombre'=>$equipo2];
             $stmt3->execute($parameters3_2);
         }
-        $stmt_goles = $conexion->prepare("SELECT * FROM jugador WHERE equipo = :equipo");
-        $parameters_goles_1 = [':equipo'=>$equipo1];
-        $stmt_goles->execute($parameters_goles_1);
-        $jugadores1 = $stmt_goles->fetchAll(PDO::FETCH_ASSOC);
-        $parameters_goles_2 = [':equipo'=>$equipo2];
-        $stmt_goles->execute($parameters_goles_2);
-        $jugadores2 = $stmt_goles->fetchAll(PDO::FETCH_ASSOC);
+        //faltan goles y tweets
         for($i=0; $i<$goles1; $i++) {
-            $jugador = $jugadores1[rand(0, count($jugadores1)-1)];
-            $stmt_jugador_goles = $conexion->prepare("UPDATE jugador SET num_goles = :goles WHERE dni = :dni");
-            $parameters = [':goles'=>$jugador['num_goles']+1, ':dni'=>$jugador['dni']];
-            $stmt_jugador_goles->execute($parameters);
-        }
-        for($j=0; $j<$goles1; $j++) {
-            $jugador = $jugadores2[rand(0, count($jugadores2)-1)];
-            $stmt_jugador_goles = $conexion->prepare("UPDATE jugador SET num_goles = :goles WHERE dni = :dni");
-            $parameters = [':goles'=>$jugador['num_goles']+1, ':dni'=>$jugador['dni']];
-            $stmt_jugador_goles->execute($parameters);
+
         }
     }
 
