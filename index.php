@@ -1,4 +1,3 @@
-/* THIS IS A TEST */
 <?php
 session_start();
 require_once "metodos.php";
