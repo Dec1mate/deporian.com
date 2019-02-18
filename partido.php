@@ -43,6 +43,13 @@ if(isset($_POST['fecha'])) {
     $stmt_eq->execute($parameters_eq2);
     $equipo2 = $stmt_eq->fetchAll(PDO::FETCH_ASSOC);
     $hoy = date("Y-m-d H:i:s", time());
+    $stmt_players = $conexion->prepare("SELECT * FROM jugador WHERE equipo = :equipo");
+    $parameters_players1 = [':equipo'=>$equipo1[0]['nombre']];
+    $parameters_players2 = [':equipo'=>$equipo2[0]['nombre']];
+    $stmt_players->execute($parameters_players1);
+    $jugadores1 = $stmt_players->fetchAll(PDO::FETCH_ASSOC);
+    $stmt_players->execute($parameters_players2);
+    $jugadores2 = $stmt_players->fetchAll(PDO::FETCH_ASSOC);
 
 
 }
@@ -128,45 +135,105 @@ if(isset($_POST['fecha'])) {
             let formulario = document.createElement('form');
             formulario.setAttribute('action', 'partido.php');
             formulario.setAttribute('method', 'POST');
-            let parrafo1 = document.createElement('p');
-            let texto_p1 = document.createTextNode('Goles de <?= $partido[0]['equipo_nombre_1'] ?>');
-            parrafo1.appendChild(texto_p1);
-            let input1 = document.createElement('input');
-            input1.setAttribute('type', 'text');
-            input1.setAttribute('name', 'goles1');
 
-            let parrafo2 = document.createElement('p');
-            let texto_p2 = document.createTextNode('Goles de <?= $partido[0]['equipo_nombre_2'] ?>');
-            parrafo2.appendChild(texto_p2);
-            let input2 = document.createElement('input');
-            input2.setAttribute('type', 'text');
-            input2.setAttribute('name', 'goles2');
+            let tabla = document.createElement('table');
+            let tbody = document.createElement('tbody');
 
-            let input3 = document.createElement('input');
-            input3.setAttribute('type', 'hidden');
-            input3.setAttribute('value', '<?= $_POST['fecha'] ?>');
-            input3.setAttribute('name', 'fecha');
+            for (let i = 0; i<8; i++) {
+                let hilera = document.createElement('tr');
+                if(i===0) {
+                    let columna1 = document.createElement('td');
+                    let imagen1 = document.createElement('img');
+                    imagen1.src = '<?= $equipo1[0]['logo']; ?>';
+                    columna1.appendChild(imagen1);
+                    let columna2 = document.createElement('td');
+                    let input1 = document.createElement('input');
+                    input1.setAttribute('type', 'text');
+                    input1.setAttribute('name', 'goles1');
+                    columna2.appendChild(input1);
+                    let columna3 = document.createElement('td');
+                    let input2 = document.createElement('input');
+                    input2.setAttribute('type', 'text');
+                    input2.setAttribute('name', 'goles2');
+                    columna3.appendChild(input2);
+                    let columna4 = document.createElement('td');
+                    let imagen2 = document.createElement('img');
+                    imagen2.src = "<?= $equipo2[0]['logo']; ?>";
+                    columna4.appendChild(imagen2);
+                    hilera.appendChild(columna1);
+                    hilera.appendChild(columna2);
+                    hilera.appendChild(columna3);
+                    hilera.appendChild(columna4);
+                } else if (i===1) {
+                    let columna = document.createElement('td');
+                    columna.setAttribute('colspan', '4');
+                    let linea = document.createElement('hr');
+                    columna.appendChild(linea);
+                    hilera.appendChild(columna);
+                } else if (i===7){
+                    let columna1 = document.createElement('td');
+                    columna1.setAttribute('colspan', '2');
+                    let boton1 = document.createElement('input');
+                    boton1.setAttribute('type', 'submit');
+                    boton1.setAttribute('value', 'Confirmar');
+                    columna1.appendChild(boton1);
+                    let columna2 = document.createElement('td');
+                    columna2.setAttribute('colspan', '2');
+                    let boton2 = document.createElement('button');
+                    boton2.setAttribute('type', 'button');
+                    let text_button = document.createTextNode("Cancelar");
+                    boton2.appendChild(text_button);
+                    columna2.appendChild(boton2);
+                    hilera.appendChild(columna1);
+                    hilera.appendChild(columna2);
+                } else {
+                    let columna1 = document.createElement('td');
+                    let text_col1 = document.createTextNode("<?= $jugadores1[0]['nombre'] ?>");
+                    columna1.appendChild(text_col1);
 
-            let boton1 = document.createElement('input');
-            boton1.setAttribute('type', 'submit');
-            boton1.setAttribute('value', 'Confirmar');
+                    let columna2 = document.createElement('td');
+                    let boton1_col2 = document.createElement('input');
+                    boton1_col2.setAttribute('type', 'button');
+                    boton1_col2.setAttribute('value', '+');
+                    columna2.appendChild(boton1_col2);
+                    let boton2_col2 = document.createElement('input');
+                    boton2_col2.setAttribute('type', 'button');
+                    boton2_col2.setAttribute('value', '-');
+                    columna2.appendChild(boton2_col2);
+                    let texto_col2 = document.createElement('input');
+                    texto_col2.setAttribute('type', 'text');
+                    texto_col2.setAttribute('name', 'goles_t1');
+                    columna2.appendChild(texto_col2);
 
-            let boton2 = document.createElement('button');
-            boton2.setAttribute('type', 'button');
-            let text_button = document.createTextNode("Cancelar");
-            boton2.appendChild(text_button);
+                    let columna3 = document.createElement('td');
+                    let boton1_col3 = document.createElement('input');
+                    boton1_col3.setAttribute('type', 'button');
+                    boton1_col3.setAttribute('value', '+');
+                    let boton2_col3 = document.createElement('input');
+                    boton2_col3.setAttribute('type', 'button');
+                    boton2_col3.setAttribute('value', '-');
+                    let texto_col3 = document.createElement('input');
+                    texto_col3.setAttribute('type', 'text');
+                    texto_col3.setAttribute('name', 'goles_t1');
+                    columna3.appendChild(texto_col3);
+                    columna3.appendChild(boton2_col3);
+                    columna3.appendChild(boton1_col3);
 
-            let salto1 = document.createElement('br');
+                    let columna4 = document.createElement('td');
+                    let text_col4 = document.createTextNode("<?= $jugadores2[0]['nombre'] ?>");
+                    columna4.appendChild(text_col4);
 
-            formulario.appendChild(parrafo1);
-            formulario.appendChild(input1);
-            formulario.appendChild(parrafo2);
-            formulario.appendChild(input2);
-            formulario.appendChild(input3);
-            formulario.appendChild(salto1);
-            formulario.appendChild(boton1);
-            formulario.appendChild(boton2);
+                    hilera.appendChild(columna1);
+                    hilera.appendChild(columna2);
+                    hilera.appendChild(columna3);
+                    hilera.appendChild(columna4);
 
+
+                }
+                tbody.appendChild(hilera);
+            }
+            tabla.appendChild(tbody);
+            formulario.appendChild(tabla);
             divisor.appendChild(formulario);
         } else {
             let parrafo = document.createElement('p');

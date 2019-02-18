@@ -35,15 +35,15 @@ if (isset($_POST['orden'])) {
             if (!$team) {
                 $stmt = $conexion->prepare("INSERT INTO equipo(nombre, logo, fecha) VALUES (:nombre, :logo, CURRENT_TIME());");
                 if ($_FILES['su_file']['size'] == 0) {
-                    $rutaImagen = "IMGs\generic.png";
+                    $rutaImagen = "IMGs\\\\generic.png";
                 } else {
-                    $rutaImagen = 'IMGs\equipos\\' . $_FILES['su_file']['name'];
+                    $rutaImagen = 'IMGs\\\\equipos\\\\' . $_FILES['su_file']['name'];
                     if (!((strpos($_FILES['su_file']['type'], 'png') || strpos($_FILES['su_file']['type'], 'jpg') || strpos($_FILES['su_file']['type'], 'jpeg')))) {
                         echo("La extension no es correcta.");
                     } else if (is_file($rutaImagen) === true) {
                         $idUnico = time();
                         $nombreArchivo = $idUnico . '_' . $_FILES['su_file']['name'];
-                        $rutaImagen = 'IMGs\equipos\\' . $nombreArchivo;
+                        $rutaImagen = 'IMGs\\\\equipos\\\\' . $nombreArchivo;
                     }
                     move_uploaded_file($_FILES['su_file']['tmp_name'], $rutaImagen);
                 }
@@ -65,17 +65,17 @@ if (isset($_POST['orden'])) {
                     $carpeta = "arbitros";
                 }
                 if ($_FILES['su_file']['size'] != 0) {
-                    $rutaImagen = 'IMGs\\'.$carpeta.'\\' . $_FILES['su_file']['name'];
+                    $rutaImagen = 'IMGs\\\\'.$carpeta.'\\\\' . $_FILES['su_file']['name'];
                     if (!((strpos($_FILES['su_file']['type'], 'png') || strpos($_FILES['su_file']['type'], 'jpg') || strpos($_FILES['su_file']['type'], 'jpeg')))) {
                         echo("La extension no es correcta.");
                     } else if (is_file($rutaImagen) === true) {
                         $idUnico = time();
                         $nombreArchivo = $idUnico . '_' . $_FILES['su_file']['name'];
-                        $rutaImagen = 'IMGs\\'.$carpeta.'\\' . $nombreArchivo;
+                        $rutaImagen = 'IMGs\\\\'.$carpeta.'\\\\' . $nombreArchivo;
                     }
                     move_uploaded_file($_FILES['su_file']['tmp_name'], $rutaImagen);
                 } else {
-                    $rutaImagen = "IMGs\generic.png";
+                    $rutaImagen = "IMGs\\\\generic.png";
                 }
                 if($_POST['entidad'] == "jugador") {
                     $parameters = [':nombre' => $_POST['su_name'], ':dni' => $_POST['su_dni'], ':equipo' => $_POST['su_team'], ':edad' => $_POST['su_age'], ':altura' => $_POST['su_height'], ':foto' => $rutaImagen, ':contrasenya' => password_hash($_POST['su_pass'], PASSWORD_DEFAULT, ['cost' => 10])];
