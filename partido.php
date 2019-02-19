@@ -139,7 +139,7 @@ if(isset($_POST['fecha'])) {
             let tabla = document.createElement('table');
             let tbody = document.createElement('tbody');
 
-            for (let i = 0; i<8; i++) {
+            for (let i = 0; i<4; i++) {
                 let hilera = document.createElement('tr');
                 if(i===0) {
                     let columna1 = document.createElement('td');
@@ -170,7 +170,7 @@ if(isset($_POST['fecha'])) {
                     let linea = document.createElement('hr');
                     columna.appendChild(linea);
                     hilera.appendChild(columna);
-                } else if (i===7){
+                } else if (i===3){
                     let columna1 = document.createElement('td');
                     columna1.setAttribute('colspan', '2');
                     let boton1 = document.createElement('input');
@@ -187,48 +187,19 @@ if(isset($_POST['fecha'])) {
                     hilera.appendChild(columna1);
                     hilera.appendChild(columna2);
                 } else {
-                    let columna1 = document.createElement('td');
-                    let text_col1 = document.createTextNode("<?= $jugadores1[0]['nombre'] ?>");
-                    columna1.appendChild(text_col1);
-
-                    let columna2 = document.createElement('td');
-                    let boton1_col2 = document.createElement('input');
-                    boton1_col2.setAttribute('type', 'button');
-                    boton1_col2.setAttribute('value', '+');
-                    columna2.appendChild(boton1_col2);
-                    let boton2_col2 = document.createElement('input');
-                    boton2_col2.setAttribute('type', 'button');
-                    boton2_col2.setAttribute('value', '-');
-                    columna2.appendChild(boton2_col2);
-                    let texto_col2 = document.createElement('input');
-                    texto_col2.setAttribute('type', 'text');
-                    texto_col2.setAttribute('name', 'goles_t1');
-                    columna2.appendChild(texto_col2);
-
-                    let columna3 = document.createElement('td');
-                    let boton1_col3 = document.createElement('input');
-                    boton1_col3.setAttribute('type', 'button');
-                    boton1_col3.setAttribute('value', '+');
-                    let boton2_col3 = document.createElement('input');
-                    boton2_col3.setAttribute('type', 'button');
-                    boton2_col3.setAttribute('value', '-');
-                    let texto_col3 = document.createElement('input');
-                    texto_col3.setAttribute('type', 'text');
-                    texto_col3.setAttribute('name', 'goles_t1');
-                    columna3.appendChild(texto_col3);
-                    columna3.appendChild(boton2_col3);
-                    columna3.appendChild(boton1_col3);
-
-                    let columna4 = document.createElement('td');
-                    let text_col4 = document.createTextNode("<?= $jugadores2[0]['nombre'] ?>");
-                    columna4.appendChild(text_col4);
-
-                    hilera.appendChild(columna1);
-                    hilera.appendChild(columna2);
-                    hilera.appendChild(columna3);
-                    hilera.appendChild(columna4);
-
-
+                    let httpRequest = new XMLHttpRequest();
+                    httpRequest.open('POST', 'formulario_goles.php', true);
+                    httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    httpRequest.onreadystatechange = function() {
+                        if(httpRequest.readyState===4) {
+                            if(httpRequest.status===200) {
+                                hilera.innerHTML = httpRequest.responseText;
+                            }
+                        }
+                    }
+                    let obj_eq = new Equipos(<?= $partido[0]['equipo_nombre_1'] ?>, <?= $partido[0]['equipo_nombre_1'] ?>);
+                    let equipos = JSON.stringify(obj_eq);
+                    httpRequest.send('equipos='+equipos);
                 }
                 tbody.appendChild(hilera);
             }
@@ -251,6 +222,11 @@ if(isset($_POST['fecha'])) {
 
         document.getElementsByTagName('button')[1].onclick = cerrarDiv;
 
+    }
+
+    function Equipos(equipo1, equipo2) {
+        this.equipo1 = equipo1;
+        this.equipo2 = equipo2;
     }
 
     function cerrarDiv() {
