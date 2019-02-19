@@ -17,42 +17,70 @@ if (isset($_SESSION['entidad'])) {
         $usuario = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Arbitro");
     }
 }
-if(isset($_POST['fecha'])) {
+if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
+    if(isset($_POST['fecha'])) {
+        $_SESSION['fecha'] = $_POST['fecha'];
+    }
+    if(isset($_POST['goles1'])) {
+        $stmt_partido = $conexion->prepare("UPDATE partido SET goles_1 = :goles1, goles_2 = :goles2 WHERE (equipo_nombre_1 = :equipo1 AND equipo_nombre_2 = :equipo2)");
+        $parameters_partido = [':goles1'=>$_POST['goles1'], ':goles2'=>$_POST['goles2'], ':equipo1'=>$_POST['equipo1'], ':equipo2'=>$_POST['equipo2']];
+        $stmt_partido->execute($parameters_partido);
+        $stmt_puntos = $conexion->prepare("UPDATE equipo SET puntos = puntos + :cant WHERE nombre = :equipo");
+        if($_POST['goles1']>$_POST['goles2']) {
+            $parameters_puntos = [':cant'=>3, ':equipo'=>$_POST['equipo1']];
+            $stmt_puntos->execute($parameters_puntos);
+        } else if($_POST['goles1']<$_POST['goles2']) {
+            $parameters_puntos = [':cant'=>3, ':equipo'=>$_POST['equipo2']];
+            $stmt_puntos->execute($parameters_puntos);
+        } else {
+            $parameters_puntos1 = [':cant'=>1, ':equipo'=>$_POST['equipo1']];
+            $stmt_puntos->execute($parameters_puntos1);
+            $parameters_puntos2 = [':cant'=>1, ':equipo'=>$_POST['equipo2']];
+            $stmt_puntos->execute($parameters_puntos2);
+        }
+        $goles_equipo_1 = $_POST['goles_jugadores_1'];
+        $goles_equipo_2 = $_POST['goles_jugadores_2'];
+        $stmt2 = $conexion->prepare("SELECT * FROM jugador WHERE equipo = :equipo ORDER BY nombre");
+        $parameters1 = [':equipo'=>$_POST['equipo1']];
+        $parameters2 = [':equipo'=>$_POST['equipo2']];
+        $stmt2->execute($parameters1);
+        $jugadores1 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        $stmt2->execute($parameters2);
+        $jugadores2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+        $stmt_goles = $conexion->prepare("UPDATE jugador SET num_goles = num_goles + :cant WHERE dni = :dni");
+        for ($i=0; $i<count($goles_equipo_1); $i++) {
+            $parameters_goles = [':cant'=>$goles_equipo_1[$i], ':dni'=>$jugadores1[$i]['dni']];
+            $stmt_goles->execute($parameters_goles);
+        }
+        for ($j=0; $j<count($goles_equipo_2); $j++) {
+            $parameters_goles = [':cant'=>$goles_equipo_2[$j], ':dni'=>$jugadores2[$j]['dni']];
+            $stmt_goles->execute($parameters_goles);
+        }
+
+    }
     if($_SESSION['entidad'] == 'jugador') {
         $stmt = $conexion->prepare("SELECT * FROM partido WHERE (equipo_nombre_1 = :equipo OR equipo_nombre_2 = :equipo) AND fecha = :fecha");
-        $parameters = [':equipo'=>$usuario[0]->getEquipo(), ':fecha'=>$_POST['fecha']];
+        $parameters = [':equipo'=>$usuario[0]->getEquipo(), ':fecha'=>$_SESSION['fecha']];
     } else {
         $stmt = $conexion->prepare("SELECT * FROM partido WHERE arbitro_dni = :arbitro AND fecha = :fecha");
-        $parameters = [':arbitro'=>$usuario[0]->getDni(), 'fecha'=>$_POST['fecha']];
+        $parameters = [':arbitro'=>$usuario[0]->getDni(), 'fecha'=>$_SESSION['fecha']];
     }
     $stmt->execute($parameters);
     $partido = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if(isset($_POST['goles1'])) {
-        $usuario[0]->ponerResultado($partido[0]['equipo_nombre_1'], $partido[0]['equipo_nombre_2'], $_POST['goles1'], $_POST['goles2'], $_POST['fecha']);
-
-    }
     $stmt_eq = $conexion->prepare("SELECT * FROM equipo WHERE nombre = :nombre");
     $parameters_eq1 = [':nombre'=>$partido[0]['equipo_nombre_1']];
     $parameters_eq2 = [':nombre'=>$partido[0]['equipo_nombre_2']];
     $stmt_eq->execute($parameters_eq1);
+    $equipo1 = $stmt_eq->fetchAll(PDO::FETCH_ASSOC);
+    $stmt_eq->execute($parameters_eq2);
+    $equipo2 = $stmt_eq->fetchAll(PDO::FETCH_ASSOC);
     $stmt_ref = $conexion->prepare("SELECT * FROM arbitro WHERE dni = :dni");
     $parameters_ref = [':dni'=>$partido[0]['arbitro_dni']];
     $stmt_ref->execute($parameters_ref);
     $arbitro = $stmt_ref->fetchAll(PDO::FETCH_ASSOC);
-    $equipo1 = $stmt_eq->fetchAll(PDO::FETCH_ASSOC);
-    $stmt_eq->execute($parameters_eq2);
-    $equipo2 = $stmt_eq->fetchAll(PDO::FETCH_ASSOC);
     $hoy = date("Y-m-d H:i:s", time());
-    $stmt_players = $conexion->prepare("SELECT * FROM jugador WHERE equipo = :equipo");
-    $parameters_players1 = [':equipo'=>$equipo1[0]['nombre']];
-    $parameters_players2 = [':equipo'=>$equipo2[0]['nombre']];
-    $stmt_players->execute($parameters_players1);
-    $jugadores1 = $stmt_players->fetchAll(PDO::FETCH_ASSOC);
-    $stmt_players->execute($parameters_players2);
-    $jugadores2 = $stmt_players->fetchAll(PDO::FETCH_ASSOC);
-
-
 }
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -132,80 +160,28 @@ if(isset($_POST['fecha'])) {
         let difuminador = document.createElement('div');
         difuminador.setAttribute('id', 'difuminador');
         if(fechaHoy>fechaPartido) {
-            let formulario = document.createElement('form');
-            formulario.setAttribute('action', 'partido.php');
-            formulario.setAttribute('method', 'POST');
-
-            let tabla = document.createElement('table');
-            let tbody = document.createElement('tbody');
-
-            for (let i = 0; i<4; i++) {
-                let hilera = document.createElement('tr');
-                if(i===0) {
-                    let columna1 = document.createElement('td');
-                    let imagen1 = document.createElement('img');
-                    imagen1.src = '<?= $equipo1[0]['logo']; ?>';
-                    columna1.appendChild(imagen1);
-                    let columna2 = document.createElement('td');
-                    let input1 = document.createElement('input');
-                    input1.setAttribute('type', 'text');
-                    input1.setAttribute('name', 'goles1');
-                    columna2.appendChild(input1);
-                    let columna3 = document.createElement('td');
-                    let input2 = document.createElement('input');
-                    input2.setAttribute('type', 'text');
-                    input2.setAttribute('name', 'goles2');
-                    columna3.appendChild(input2);
-                    let columna4 = document.createElement('td');
-                    let imagen2 = document.createElement('img');
-                    imagen2.src = "<?= $equipo2[0]['logo']; ?>";
-                    columna4.appendChild(imagen2);
-                    hilera.appendChild(columna1);
-                    hilera.appendChild(columna2);
-                    hilera.appendChild(columna3);
-                    hilera.appendChild(columna4);
-                } else if (i===1) {
-                    let columna = document.createElement('td');
-                    columna.setAttribute('colspan', '4');
-                    let linea = document.createElement('hr');
-                    columna.appendChild(linea);
-                    hilera.appendChild(columna);
-                } else if (i===3){
-                    let columna1 = document.createElement('td');
-                    columna1.setAttribute('colspan', '2');
-                    let boton1 = document.createElement('input');
-                    boton1.setAttribute('type', 'submit');
-                    boton1.setAttribute('value', 'Confirmar');
-                    columna1.appendChild(boton1);
-                    let columna2 = document.createElement('td');
-                    columna2.setAttribute('colspan', '2');
-                    let boton2 = document.createElement('button');
-                    boton2.setAttribute('type', 'button');
-                    let text_button = document.createTextNode("Cancelar");
-                    boton2.appendChild(text_button);
-                    columna2.appendChild(boton2);
-                    hilera.appendChild(columna1);
-                    hilera.appendChild(columna2);
-                } else {
-                    let httpRequest = new XMLHttpRequest();
-                    httpRequest.open('POST', 'formulario_goles.php', true);
-                    httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    httpRequest.onreadystatechange = function() {
-                        if(httpRequest.readyState===4) {
-                            if(httpRequest.status===200) {
-                                hilera.innerHTML = httpRequest.responseText;
-                            }
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.open('POST', 'formulario_goles.php', true);
+            httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            httpRequest.onreadystatechange = function() {
+                if(httpRequest.readyState===4) {
+                    if(httpRequest.status === 200) {
+                        divisor.innerHTML = httpRequest.responseText;
+                        document.getElementsByTagName('button')[21].onclick = updatePartido;
+                        document.getElementsByTagName('button')[22].onclick = cerrarDiv;
+                        for(let i = 0; i<document.getElementsByClassName('anyadir').length; i++) {
+                            document.getElementsByClassName('anyadir')[i].onclick = sumarGol;
+                        }
+                        for(let i = 0; i<document.getElementsByClassName('restar').length; i++) {
+                            document.getElementsByClassName('restar')[i].onclick = restarGol;
                         }
                     }
-                    let obj_eq = new Equipos(<?= $partido[0]['equipo_nombre_1'] ?>, <?= $partido[0]['equipo_nombre_1'] ?>);
-                    let equipos = JSON.stringify(obj_eq);
-                    httpRequest.send('equipos='+equipos);
                 }
-                tbody.appendChild(hilera);
             }
-            tabla.appendChild(tbody);
-            formulario.appendChild(tabla);
-            divisor.appendChild(formulario);
+            let obj_eq = new Equipos("<?= $partido[0]['equipo_nombre_1'] ?>", "<?= $partido[0]['equipo_nombre_2'] ?>");
+            let equipos = JSON.stringify(obj_eq);
+            httpRequest.send('equipos='+equipos);
+
         } else {
             let parrafo = document.createElement('p');
             let texto_p = document.createTextNode("No puedes puntuar un partido que aun no se ha jugado");
@@ -219,9 +195,36 @@ if(isset($_POST['fecha'])) {
         }
         document.body.appendChild(difuminador);
         document.body.appendChild(divisor);
+    }
 
-        document.getElementsByTagName('button')[1].onclick = cerrarDiv;
+    function sumarGol(event) {
+        for (let i = 0; i<document.getElementsByClassName('anyadir').length; i+=2) {
+            if(event.target === document.getElementsByClassName('anyadir')[i]) {
+                document.getElementsByName('goles_jugadores_1[]')[i/2].value++;
+            }
+        }
+        for (let j = 1; j<document.getElementsByClassName('anyadir').length; j+=2) {
+            if(event.target === document.getElementsByClassName('anyadir')[j]) {
+                document.getElementsByName('goles_jugadores_2[]')[Math.floor(j/2)].value++;
+            }
+        }
+    }
 
+    function restarGol(event) {
+        for (let i = 0; i<document.getElementsByClassName('restar').length; i+=2) {
+            if(event.target === document.getElementsByClassName('restar')[i] && document.getElementsByName('goles_jugadores_1[]')[i/2].value!=0) {
+                document.getElementsByName('goles_jugadores_1[]')[i/2].value--;
+            }
+        }
+        for (let j = 1; j<document.getElementsByClassName('restar').length; j+=2) {
+            if(event.target === document.getElementsByClassName('restar')[j] && document.getElementsByName('goles_jugadores_2[]')[Math.floor(j/2)].value!=0) {
+                document.getElementsByName('goles_jugadores_2[]')[Math.floor(j/2)].value--;
+            }
+        }
+    }
+
+    function updatePartido() {
+        document.getElementsByTagName('form')[2].submit();
     }
 
     function Equipos(equipo1, equipo2) {
