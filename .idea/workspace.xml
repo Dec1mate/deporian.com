@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f2ee9ac0-09f6-4e88-9f5e-2e2ab9ce0aae" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/formulario_goles.php" beforeDir="false" afterPath="$PROJECT_DIR$/formulario_goles.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/partido.php" beforeDir="false" afterPath="$PROJECT_DIR$/partido.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,44 +26,44 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="php" value="6" />
+          <entry key="php" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="PHP" value="6" />
+          <entry key="PHP" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="php" value="1074" />
-          <entry key="txt" value="125" />
+          <entry key="php" value="4442" />
+          <entry key="txt" value="158" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PHP" value="1074" />
-          <entry key="PLAIN_TEXT" value="125" />
+          <entry key="PHP" value="4442" />
+          <entry key="PLAIN_TEXT" value="158" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/partido.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="201" column="57" selection-start-line="201" selection-start-column="57" selection-end-line="201" selection-end-column="57" />
+            <state relative-caret-position="647">
+              <caret line="219" column="127" selection-start-line="219" selection-start-column="127" selection-end-line="219" selection-end-column="127" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/formulario_goles.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+            <state relative-caret-position="646">
+              <caret line="38" column="159" selection-start-line="38" selection-start-column="159" selection-end-line="38" selection-end-column="159" />
             </state>
           </provider>
         </entry>
@@ -76,14 +76,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/calendario_partidos.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-408" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/index.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4182" />
+            <state relative-caret-position="-398" />
           </provider>
         </entry>
       </file>
@@ -105,8 +98,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/entities/Arbitro.php" />
-        <option value="$PROJECT_DIR$/partido.php" />
         <option value="$PROJECT_DIR$/formulario_goles.php" />
+        <option value="$PROJECT_DIR$/partido.php" />
       </list>
     </option>
   </component>
@@ -177,7 +170,7 @@
       <option name="presentableId" value="Default" />
       <updated>1550492390664</updated>
       <workItem from="1550492391718" duration="871000" />
-      <workItem from="1550606615030" duration="1357000" />
+      <workItem from="1550606615030" duration="7586000" />
     </task>
     <task id="LOCAL-00001" summary="prueba 3">
       <created>1550492427477</created>
@@ -193,11 +186,25 @@
       <option name="project" value="LOCAL" />
       <updated>1550493097046</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="faltan goles y tweets&#10;(preguntar si los goles se distribuyen aleatoriamente o tiene que poner el arbitro quien mete)">
+      <created>1550608036439</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1550608036439</updated>
+    </task>
+    <task id="LOCAL-00004" summary="prueba formulario jugadores/goles">
+      <created>1550608092549</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1550608092549</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2228000" />
+    <option name="totallyTimeSpent" value="8457000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -223,6 +230,27 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Database" order="3" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1130064" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.329718" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -233,7 +261,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="prueba 3" />
     <MESSAGE value="faltan goles y tweets&#10;(preguntar si los goles se distribuyen aleatoriamente o tiene que poner el arbitro quien mete)" />
-    <option name="LAST_COMMIT_MESSAGE" value="faltan goles y tweets&#10;(preguntar si los goles se distribuyen aleatoriamente o tiene que poner el arbitro quien mete)" />
+    <MESSAGE value="prueba formulario jugadores/goles" />
+    <option name="LAST_COMMIT_MESSAGE" value="prueba formulario jugadores/goles" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/entities/Arbitro.php">
@@ -245,14 +274,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4182" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/partido.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="201" column="57" selection-start-line="201" selection-start-column="57" selection-end-line="201" selection-end-column="57" />
-        </state>
+        <state relative-caret-position="-4277" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/registro.php">
@@ -260,13 +282,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/calendario_partidos.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-408" />
+        <state relative-caret-position="-398" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/formulario_goles.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+        <state relative-caret-position="646">
+          <caret line="38" column="159" selection-start-line="38" selection-start-column="159" selection-end-line="38" selection-end-column="159" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/usuario.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-272">
+          <caret line="83" column="29" lean-forward="true" selection-start-line="83" selection-start-column="29" selection-end-line="83" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/partido.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="647">
+          <caret line="219" column="127" selection-start-line="219" selection-start-column="127" selection-end-line="219" selection-end-column="127" />
         </state>
       </provider>
     </entry>
