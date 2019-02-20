@@ -163,7 +163,7 @@ class Jugador {
             }
             $fechas = [date("Y-m-d", $fecha), date("Y-m-d", $fecha + 86400)];
             $equipos_aux = $equipos_liga;
-            do {
+            /*do {
                 shuffle($equipos_aux);
                 $foo = false;
                 for($k=0; $k<6; $k++) {
@@ -196,10 +196,10 @@ class Jugador {
                 $stmt_meter = $conexion->prepare("INSERT INTO partido(equipo_nombre_1, equipo_nombre_2, arbitro_dni, campo_id, fecha, jornada_numero, liga_edicion) VALUES (:equipo1, :equipo2, :arbitro, :campo, :fecha, :jornada, :liga)");
                 $parameters_meter = [':equipo1'=>$equipos_aux[($j*2)]['equipo_nombre'], ':equipo2'=>$equipos_aux[($j*2)+1]['equipo_nombre'], ':arbitro'=>$arbitro_nuevo['dni'], ':campo'=>$campo_nuevo['id'], ':fecha'=>$fecha_nueva, ':jornada'=>$i+1, ':liga'=>$num_ligas];
                 $stmt_meter->execute($parameters_meter);
-            }
+            }*/
         }
 
-        /*for ($i=0; $i<11; $i++) {
+        for ($i=0; $i<11; $i++) {
             for ($j=0; $j<11; $j++) {
                 if($i!=$j && $i>$j) {
                     $stmt_ins = $conexion->prepare("INSERT INTO partido (equipo_nombre_1, equipo_nombre_2, liga_edicion) VALUES (:equipo1, :equipo2, :liga)");
@@ -216,12 +216,12 @@ class Jugador {
             for ($j=0; $j<6; $j++) {
                 for ($k=0; $k<count($partidos); $k++) {
                     $stmt_jornada = $conexion->prepare("SELECT * FROM partido WHERE liga_edicion = :liga AND jornada_numero = :jornada AND (equipo_nombre_1 = :equipo OR equipo_nombre_2 = :equipo)");
-                    $parameters = [':liga'=>$this->contarLigas(), ':jornada'=>$i, ':equipo'=>];
+                    //$parameters = [':liga'=>$this->contarLigas(), ':jornada'=>$i, ':equipo'=>];
                     $stmt_jornada->execute($parameters);
                     $partidos_jornada = $stmt_jornada->fetchAll(PDO::FETCH_ASSOC);
                 }
             }
-        }*/
+        }
 
     }
 
