@@ -32,23 +32,23 @@ if(isset($_POST['equipos'])) {
             if(count($jugadores2)>$max_jugadores) {
                 $max_jugadores = count($jugadores2);
             }
-                for($i=0; $i<$max_jugadores; $i++) :?>
+            for($i=0; $i<$max_jugadores; $i++) :?>
             <tr>
-                <?php if($jugadores1[$i]!=null) :?>
+                <?php if(isset($jugadores1[$i])) :?>
                 <td><?= $jugadores1[$i]['nombre'] ?></td>
-                <td><button type="button" class="anyadir">+</button><button type="button" class="restar">-</button><input type="text" name="goles_jugadores_1[]" value="0" readonly></td>
+                <td><button type="button" class="anyadir">+</button><button type="button" class="restar">-</button><input type="text" class="input_goles" name="goles_jugadores_1[]" value="0" readonly></td>
                 <?php else: ?>
                 <td colspan="2"></td>
-                <?php endif;
-                if($jugadores2[$i]!=null) :?>
-                <td><input type="text" name="goles_jugadores_2[]" value="0" readonly><button type="button" class="restar">-</button><button type="button" class="anyadir">+</button></td>
+                <?php endif; ?>
+                <?php if(isset($jugadores2[$i])) :?>
+                <td><input type="text" class="input_goles" name="goles_jugadores_2[]" value="0" readonly><button type="button" class="restar">-</button><button type="button" class="anyadir">+</button></td>
                 <td><?= $jugadores2[$i]['nombre'] ?></td>
                 <?php else: ?>
                 <td colspan="2"></td>
                 <?php endif; ?>
             </tr>
             <?php endfor; ?>
-            <tr><td colspan="2"><button type="button">Aceptar</button></td><td colspan="2"><button type="button">Cancelar</button></td></tr>
+            <tr><td colspan="2"><button type="button" id="aceptar">Aceptar</button></td><td colspan="2"><button type="button" id="cancelar">Cancelar</button></td></tr>
         </table>
     </form>
     <?php endif;

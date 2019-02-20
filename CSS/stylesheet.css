@@ -106,6 +106,14 @@ body {
 #confirmar table img {
     width: 100px;
 }
+#confirmar input[type=button], #confirmar input[type=submit], #confirmar #aceptar, #confirmar #cancelar {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: none;
+    background-color: forestgreen;
+    color: white;
+    padding: 10px 30px;
+}
 .formulario{
     position: fixed;
     left: 50%;
@@ -421,6 +429,9 @@ body {
 }
 #content_partido {
     color: black;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 #content_partido table img {
     width: 255px;
@@ -443,4 +454,8 @@ body {
 }
 #content_partido p:first-child {
     float: left;
+}
+.input_goles {
+    border: none;
+    text-align: center;
 }

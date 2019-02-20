@@ -166,8 +166,8 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
                 if(httpRequest.readyState===4) {
                     if(httpRequest.status === 200) {
                         divisor.innerHTML = httpRequest.responseText;
-                        document.getElementsByTagName('button')[21].onclick = updatePartido;
-                        document.getElementsByTagName('button')[22].onclick = cerrarDiv;
+                        document.getElementById('aceptar').onclick = updatePartido;
+                        document.getElementById('cancelar').onclick = cerrarDiv;
                         for(let i = 0; i<document.getElementsByClassName('anyadir').length; i++) {
                             document.getElementsByClassName('anyadir')[i].onclick = sumarGol;
                         }
