@@ -118,7 +118,11 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             </tr>
             <tr>
                 <td><?= $partido[0]['equipo_nombre_1'] ?></td>
-                <td></td>
+                <?php if($_SESSION['entidad']=='arbitro' && $partido[0]['goles_1']==null): ?>
+                    <td><button type="button">Puntuar partido</button></td>
+                <?php else: ?>
+                    <td></td>
+                <?php endif; ?>
                 <td><?= $partido[0]['equipo_nombre_2'] ?></td>
             </tr>
             <?php if($partido[0]['goles_1']!=null): ?>
@@ -129,9 +133,21 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             </tr>
             <?php endif; ?>
         </table>
-        <h3>Colegiado</h3>
-        <img src="<?= $arbitro[0]['foto'] ?>" />
-        <p><?= $arbitro[0]['nombre'] ?></p>
+        <table>
+            <tr>
+                <td>
+                    <img src="<?= $arbitro[0]['foto'] ?>" />
+                </td>
+                <td>
+                    <h3>Colegiado</h3>
+                    <p><?= $arbitro[0]['nombre'] ?></p>
+                </td>
+                <td>
+                    <h3>Campo</h3>
+
+                </td>
+            </tr>
+        </table>
 
         <h3>Campo</h3>
         <?php if($partido[0]['campo_id'] == 1): ?>
@@ -140,9 +156,6 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
         <?php else: ?>
         <p>Exterior</p>
         <img src="IMGs/exterior.jpg">
-        <?php endif; ?>
-        <?php if($_SESSION['entidad']=='arbitro' && $partido[0]['goles_1']==null): ?>
-        <button type="button">Puntuar partido</button>
         <?php endif; ?>
     </div>
 
@@ -187,6 +200,7 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             parrafo.appendChild(texto_p);
             let button = document.createElement('button');
             button.setAttribute('type', 'button');
+            button.setAttribute('id', 'cancelar');
             let text_button = document.createTextNode("Aceptar");
             button.appendChild(text_button);
             divisor.appendChild(parrafo);
@@ -194,6 +208,7 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
         }
         document.body.appendChild(difuminador);
         document.body.appendChild(divisor);
+        document.getElementById('cancelar').onclick = cerrarDiv;
     }
 
     function sumarGol(event) {

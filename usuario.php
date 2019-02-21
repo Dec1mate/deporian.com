@@ -120,7 +120,7 @@ if (isset($_POST['opciones_jugador'])) {
             }
 
             function pagePartido(event) {
-                event.target.submit();
+                event.target.getElementsByTagName('form')[0].submit();
             }
 
             function cambioMes(event) {

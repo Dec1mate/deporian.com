@@ -31,8 +31,8 @@ function obtenerDia(&$cont, $reservas, $partidos, $conexion) {
     if ($reservado == true) : ?>
         <td><a class="reservado" href="reserva.php"><p class="date"><?= date("j", $cont) ?></p><p>Reserva</p></a></td>
     <?php elseif ($partido == true) : ?>
-        <td>
-            <form class="partido" action="partido.php" method="post">
+        <td class="partido">
+            <form action="partido.php" method="post">
                 <p class="date"><?= date("j", $cont) ?></p>
                 <div>
                     <img src="<?= $equipos_part[0]['logo1'] ?>" />
