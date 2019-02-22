@@ -136,7 +136,7 @@ class Jugador {
                 'consumer_secret'=>'NbXofTGJ78kSoRoPoMFIuiJ1ziwi1shfuE8ORwiKhtTN9k0eXY',
                 'oauth_access_token'=>'1092417797588766720-tSwJjv0rArKBDAiGdWsJxWdZ4K0Uu5',
                 'oauth_access_token_secret'=>'WgQMDEOpJ77k0Vxb4QNZyrzkqqXdO5g0VNIhapbi3weX5');
-            publicarTweet($settings, $texto);
+            //publicarTweet($settings, $texto);
             if(count($nums_eq)==11) {
                 $this->empezarLiga();
             }
@@ -163,7 +163,7 @@ class Jugador {
             }
             $fechas = [date("Y-m-d", $fecha), date("Y-m-d", $fecha + 86400)];
             $equipos_aux = $equipos_liga;
-            /*do {
+            do {
                 shuffle($equipos_aux);
                 $foo = false;
                 for($k=0; $k<6; $k++) {
@@ -196,10 +196,10 @@ class Jugador {
                 $stmt_meter = $conexion->prepare("INSERT INTO partido(equipo_nombre_1, equipo_nombre_2, arbitro_dni, campo_id, fecha, jornada_numero, liga_edicion) VALUES (:equipo1, :equipo2, :arbitro, :campo, :fecha, :jornada, :liga)");
                 $parameters_meter = [':equipo1'=>$equipos_aux[($j*2)]['equipo_nombre'], ':equipo2'=>$equipos_aux[($j*2)+1]['equipo_nombre'], ':arbitro'=>$arbitro_nuevo['dni'], ':campo'=>$campo_nuevo['id'], ':fecha'=>$fecha_nueva, ':jornada'=>$i+1, ':liga'=>$num_ligas];
                 $stmt_meter->execute($parameters_meter);
-            }*/
+            }
         }
 
-        for ($i=0; $i<12; $i++) {
+        /*for ($i=0; $i<12; $i++) {
             for ($j=0; $j<12; $j++) {
                 if($i!=$j && $i>$j) {
                     $stmt_ins = $conexion->prepare("INSERT INTO partido (equipo_nombre_1, equipo_nombre_2, liga_edicion) VALUES (:equipo1, :equipo2, :liga)");
@@ -230,9 +230,14 @@ class Jugador {
                         break;
                     }
                 }
-                echo count($partidos)."<br>";
             }
-        }
+            $stmt_prueba = $conexion->prepare("SELECT * FROM partido WHERE jornada_numero = :jornada");
+            $parameters = [':jornada'=>$i];
+            $stmt_prueba->execute($parameters);
+            $partidos_jorn = $stmt_prueba->fetchAll(PDO::FETCH_ASSOC);
+            print_r($partidos_jorn);
+            echo"<br>";
+        }*/
 
     }
 

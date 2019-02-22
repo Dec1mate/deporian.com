@@ -133,7 +133,7 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             </tr>
             <?php endif; ?>
         </table>
-        <table>
+        <table id="partido_2">
             <tr>
                 <td>
                     <img src="<?= $arbitro[0]['foto'] ?>" />
