@@ -144,19 +144,19 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
                 </td>
                 <td>
                     <h3>Campo</h3>
-
+                    <?php if($partido[0]['campo_id'] == 1): ?>
+                        <p>Interior</p>
+                    <?php else: ?>
+                        <p>Exterior</p>
+                    <?php endif; ?>
                 </td>
+                <td><?php if($partido[0]['campo_id'] == 1): ?>
+                        <img src="IMGs/interior.jpg">
+                    <?php else: ?>
+                        <img src="IMGs/exterior.jpg">
+                    <?php endif; ?></td>
             </tr>
         </table>
-
-        <h3>Campo</h3>
-        <?php if($partido[0]['campo_id'] == 1): ?>
-        <p>Interior</p>
-        <img src="IMGs/interior.jpg">
-        <?php else: ?>
-        <p>Exterior</p>
-        <img src="IMGs/exterior.jpg">
-        <?php endif; ?>
     </div>
 
 </div>
