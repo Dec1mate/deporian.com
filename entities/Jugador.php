@@ -1,4 +1,6 @@
 <?php
+require_once "Nodo.php";
+require_once "Lista.php";
 /**
  * Created by PhpStorm.
  * User: ianmo
@@ -154,7 +156,8 @@ class Jugador {
         $parameters = [':liga'=>$this->contarLigas()];
         $stmt->execute($parameters);
         $equipos_liga = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        for ($i=0; $i<11; $i++) {
+
+        /*for ($i=0; $i<11; $i++) {
             $fecha += 604800;
             if(date("l", $fecha)!="Saturday" && $i==0) {
                 do {
@@ -197,6 +200,38 @@ class Jugador {
                 $parameters_meter = [':equipo1'=>$equipos_aux[($j*2)]['equipo_nombre'], ':equipo2'=>$equipos_aux[($j*2)+1]['equipo_nombre'], ':arbitro'=>$arbitro_nuevo['dni'], ':campo'=>$campo_nuevo['id'], ':fecha'=>$fecha_nueva, ':jornada'=>$i+1, ':liga'=>$num_ligas];
                 $stmt_meter->execute($parameters_meter);
             }
+        }*/
+
+        shuffle($equipos_liga);
+        $lista_A = new Lista($equipos_liga[0]['equipo_nombre']);
+        $lista_B = new Lista($equipos_liga[1]['equipo_nombre']);
+        for($i=2; $i<12; $i++) {
+            if($i%2==0) {
+                $lista_A->anyadirNodoFinal($equipos_liga[$i]['equipo_nombre']);
+            } else {
+                $lista_B->anyadirNodoFinal($equipos_liga[$i]['equipo_nombre']);
+            }
+        }
+
+        $stmt_anyadir_partido = $conexion->prepare("INSERT INTO partido(equipo_nombre_1, equipo_nombre_2, jornada_numero, liga_edicion) VALUES (:equipo1, :equipo2, :jornada, :liga)");
+        for($k = 1; $k<12; $k++) {
+            $equipo1 = $lista_A->getInicio();
+            $equipo2 = $lista_B->getInicio();
+            $equipo_aux_1 = $equipo2;
+            for($l=0; $l<6; $l++) {
+                $parameters_partido = [':equipo1'=>$equipo1->dato, ':equipo2'=>$equipo2->dato, ':jornada'=>$k, ':liga'=>$this->contarLigas()];
+                $stmt_anyadir_partido->execute($parameters_partido);
+                $equipo1 = $equipo1->siguiente;
+                $equipo2 = $equipo2->siguiente;
+            }
+            $lista_A->anyadirNodoPosicion($equipo_aux_1, 2);
+            $lista_B->eliminarNodoInicio();
+            $equipo_aux_2 = $equipo2;
+            $lista_B->anyadirNodoFinal($equipo_aux_2);
+            $lista_A->eliminarNodoFinal();
+            print_r($lista_A);
+            echo"<br>";
+            print_r($lista_B);
         }
 
         /*for ($i=0; $i<12; $i++) {

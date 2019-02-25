@@ -135,7 +135,7 @@ $teams_liga = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
                 <a href="usuario.php" id="user"><div><img src='<?= $usuario[0]['foto'] ?>' /></div><?= $usuario[0]['nombre'] ?></a>
             <?php endif; ?>
         </div>
-        <?php if(!empty($teams_liga)) :?>
+        <?php if(count($teams_liga)==12) :?>
         <table id="liga">
             <tr><th colspan="3">LIGA ACTUAL</th></tr>
             <tr><td colspan="2">Equipo</td><td>Puntos</td></tr>
@@ -144,7 +144,7 @@ $teams_liga = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
             <?php endforeach; ?>
         </table>
         <?php else: ?>
-        <div><img src="IMGs/exterior.jpg" /></div>
+        <div id="apuntate"><img src="IMGs/apuntate.png"></div>
         <?php endif; ?>
         <div id="texto_index">
             <h1>Bienvenido a DeporIan</h1>
