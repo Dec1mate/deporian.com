@@ -120,7 +120,14 @@ if (isset($_POST['opciones_jugador'])) {
             }
 
             function pagePartido(event) {
-                event.target.getElementsByTagName('form')[0].submit();
+                if(event.target.tagName=="TD") {
+                    event.target.getElementsByTagName('form')[0].submit();
+                } else if(event.target.tagName=="DIV") {
+                    event.target.parentNode.getElementsByTagName('form')[0].submit();
+                } else if(event.target.tagName=="IMG" || event.target.tagName=="I") {
+                    event.target.parentNode.parentNode.getElementsByTagName('form')[0].submit();
+                }
+
             }
 
             function cambioMes(event) {

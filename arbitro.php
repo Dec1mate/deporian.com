@@ -1,5 +1,5 @@
 <form action="usuario.php" method="post">
-    <input type="button" value="Modificar datos">
+    <input type="button" value="<?= $i_modificar ?>">
     <input type="hidden" name="opciones_jugador">
 </form>
 <script>

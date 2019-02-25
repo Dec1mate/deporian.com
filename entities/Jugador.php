@@ -156,6 +156,11 @@ class Jugador {
         $parameters = [':liga'=>$this->contarLigas()];
         $stmt->execute($parameters);
         $equipos_liga = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt_reiniciar = $conexion->prepare("UPDATE equipo SET puntos = 0 WHERE nombre = :equipo");
+        for ($i=0; $i<count($equipos_liga)-1; $i++) {
+            $parameters_reiniciar = [':equipo'=>$equipos_liga[$i]['equipo_nombre']];
+            $stmt_reiniciar->execute($parameters_reiniciar);
+        }
 
         /*for ($i=0; $i<11; $i++) {
             $fecha += 604800;
@@ -205,6 +210,15 @@ class Jugador {
         shuffle($equipos_liga);
         $lista_A = new Lista($equipos_liga[0]['equipo_nombre']);
         $lista_B = new Lista($equipos_liga[1]['equipo_nombre']);
+        //Arbitros
+        $stmt_arb = $conexion->prepare("SELECT * FROM arbitro");
+        $stmt_arb->execute();
+        $arbitros = $stmt_arb->fetchAll(PDO::FETCH_ASSOC);
+        //Campos
+        $stmt_camp = $conexion->prepare("SELECT * FROM campo");
+        $stmt_camp->execute();
+        $campos = $stmt_camp->fetchAll(PDO::FETCH_ASSOC);
+
         for($i=2; $i<12; $i++) {
             if($i%2==0) {
                 $lista_A->anyadirNodoFinal($equipos_liga[$i]['equipo_nombre']);
@@ -213,67 +227,43 @@ class Jugador {
             }
         }
 
-        $stmt_anyadir_partido = $conexion->prepare("INSERT INTO partido(equipo_nombre_1, equipo_nombre_2, jornada_numero, liga_edicion) VALUES (:equipo1, :equipo2, :jornada, :liga)");
+        $stmt_anyadir_partido = $conexion->prepare("INSERT INTO partido(equipo_nombre_1, equipo_nombre_2, arbitro_dni, campo_id, fecha, jornada_numero, liga_edicion) VALUES (:equipo1, :equipo2, :arbitro, :campo, :fecha, :jornada, :liga)");
         for($k = 1; $k<12; $k++) {
+            $fecha += 604800;
+            if(date("l", $fecha)!="Saturday" && $k==1) {
+                do {
+                    $fecha += 86400;
+                } while(date("l", $fecha)!="Saturday");
+            }
+            $fechas = [date("Y-m-d", $fecha), date("Y-m-d", $fecha + 86400)];
             $equipo1 = $lista_A->getInicio();
             $equipo2 = $lista_B->getInicio();
-            $equipo_aux_1 = $equipo2;
+            $equipo_aux_1 = $lista_B->getInicio()->dato;
+            $equipo_aux_2 = $lista_A->getNodoFinal()->dato;
             for($l=0; $l<6; $l++) {
-                $parameters_partido = [':equipo1'=>$equipo1->dato, ':equipo2'=>$equipo2->dato, ':jornada'=>$k, ':liga'=>$this->contarLigas()];
+                do {
+                    $dia_nuevo = $fechas[rand(0, count($fechas)-1)];
+                    $fecha_nueva = $dia_nuevo." ".$horas[rand(0, count($horas)-1)];
+                    $campo_nuevo = $campos[rand(0, count($campos)-1)];
+                    $arbitro_nuevo = $arbitros[rand(0, count($arbitros)-1)];
+                    $stmt_aux = $conexion->prepare("SELECT * FROM partido WHERE fecha LIKE :fecha AND arbitro_dni = :dni");
+                    $parameters_aux = [':fecha'=>$dia_nuevo.'%', ':dni'=>$arbitro_nuevo['dni']];
+                    $stmt_aux->execute($parameters_aux);
+                    $partido = $stmt_aux->fetchAll(PDO::FETCH_ASSOC);
+                } while(count($partido)>0);
+                $parameters_partido = [':equipo1'=>$equipo1->dato, ':equipo2'=>$equipo2->dato,':arbitro'=>$arbitro_nuevo['dni'], ':campo'=>$campo_nuevo['id'], ':fecha'=>$fecha_nueva, ':jornada'=>$k, ':liga'=>$this->contarLigas()];
                 $stmt_anyadir_partido->execute($parameters_partido);
-                $equipo1 = $equipo1->siguiente;
-                $equipo2 = $equipo2->siguiente;
+                if(isset($equipo1->siguiente)) {
+                    $equipo1 = $equipo1->siguiente;
+                    $equipo2 = $equipo2->siguiente;
+                }
             }
             $lista_A->anyadirNodoPosicion($equipo_aux_1, 2);
             $lista_B->eliminarNodoInicio();
-            $equipo_aux_2 = $equipo2;
-            $lista_B->anyadirNodoFinal($equipo_aux_2);
             $lista_A->eliminarNodoFinal();
-            print_r($lista_A);
-            echo"<br>";
-            print_r($lista_B);
+            $lista_B->anyadirNodoFinal($equipo_aux_2);
+
         }
-
-        /*for ($i=0; $i<12; $i++) {
-            for ($j=0; $j<12; $j++) {
-                if($i!=$j && $i>$j) {
-                    $stmt_ins = $conexion->prepare("INSERT INTO partido (equipo_nombre_1, equipo_nombre_2, liga_edicion) VALUES (:equipo1, :equipo2, :liga)");
-                    $parameters_ins = [':equipo1'=>$equipos_liga[$i]['equipo_nombre'], ':equipo2'=>$equipos_liga[$j]['equipo_nombre'], ':liga'=>$this->contarLigas()];
-                    $stmt_ins->execute($parameters_ins);
-                }
-            }
-        }
-
-        $stmt_partidos = $conexion->prepare("SELECT * FROM partido WHERE liga_edicion = :liga");
-        $parameters = [':liga'=>$this->contarLigas()];
-        $stmt_partidos->execute($parameters);
-        $partidos = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
-        shuffle($partidos);
-        $new_stmt_partido = $conexion->prepare("SELECT * FROM partido WHERE liga_edicion = :liga AND jornada_numero = :jornada AND (equipo_nombre_1 = :equipo1 OR equipo_nombre_2 = :equipo1 OR equipo_nombre_1 = :equipo2 OR equipo_nombre_2 = :equipo2)");
-        //$new_stmt_partido = $conexion->prepare("SELECT * FROM partido WHERE liga_edicion = :liga AND equipo_nombre_1 NOT IN (SELECT * FROM partido WHERE (equipo_nombre_1 = :equipo1 OR equipo_nombre_2 = :equipo2) AND jornada_numero = :jornada) AND equipo_nombre_2 NOT IN (SELECT * FROM partido WHERE (equipo_nombre_1 = :equipo1 OR equipo_nombre_2 = :equipo2) AND jornada_numero = :jornada)");
-        for ($i=1; $i<=11; $i++) {
-            for ($j=0; $j<6; $j++) {
-                for($k=0; $k<count($partidos); $k++) {
-                    $new_parameters = [':liga'=>$this->contarLigas(), ':jornada'=>$i, ':equipo1'=>$partidos[$k]['equipo_nombre_1'], ':equipo2'=>$partidos[$k]['equipo_nombre_2']];
-                    $new_stmt_partido->execute($new_parameters);
-                    $partidos_jornada = $new_stmt_partido->fetchAll(PDO::FETCH_ASSOC);
-                    if(empty($partidos_jornada)) {
-                        $stmt_update_partido = $conexion->prepare("UPDATE partido SET jornada_numero = :jornada WHERE equipo_nombre_1 = :equipo1 AND equipo_nombre_2 = :equipo2");
-                        $parameters_update_partido = [':jornada'=>$i, ':equipo1'=>$partidos[$k]['equipo_nombre_1'], ':equipo2'=>$partidos[$k]['equipo_nombre_2']];
-                        $stmt_update_partido->execute($parameters_update_partido);
-                        array_splice($partidos, $k, 1);
-                        break;
-                    }
-                }
-            }
-            $stmt_prueba = $conexion->prepare("SELECT * FROM partido WHERE jornada_numero = :jornada");
-            $parameters = [':jornada'=>$i];
-            $stmt_prueba->execute($parameters);
-            $partidos_jorn = $stmt_prueba->fetchAll(PDO::FETCH_ASSOC);
-            print_r($partidos_jorn);
-            echo"<br>";
-        }*/
-
     }
 
     /* -- GETTERS Y SETTERS -- */

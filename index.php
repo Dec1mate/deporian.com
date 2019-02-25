@@ -137,8 +137,8 @@ $teams_liga = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
         </div>
         <?php if(count($teams_liga)==12) :?>
         <table id="liga">
-            <tr><th colspan="3">LIGA ACTUAL</th></tr>
-            <tr><td colspan="2">Equipo</td><td>Puntos</td></tr>
+            <tr><th colspan="3"><?= $i_index_tabla_1 ?></th></tr>
+            <tr><td colspan="2"><?= $i_index_tabla_2 ?></td><td><?= $i_index_tabla_3 ?></td></tr>
             <?php foreach ($teams_liga as $team):?>
             <tr><td><img src="<?= $team['logo'] ?>"></td><td><?= $team['nombre'] ?></td><td><?= $team['puntos'] ?></td></tr>
             <?php endforeach; ?>
@@ -147,11 +147,11 @@ $teams_liga = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
         <div id="apuntate"><img src="IMGs/apuntate.png"></div>
         <?php endif; ?>
         <div id="texto_index">
-            <h1>Bienvenido a DeporIan</h1>
-            <h2>La pagina de gestion de ligas donde tus sueños se hacen realidad</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipiscing elit a congue tortor, nostra fames suspendisse condimentum gravida elementum torquent rhoncus blandit ut at, non justo tellus aptent fermentum litora tristique ultrices fusce. Inceptos etiam blandit in penatibus ut vestibulum felis, ligula praesent scelerisque tincidunt turpis vitae. Sociis lacus fames congue blandit molestie primis est lobortis non, viverra quisque duis etiam facilisi conubia libero eget.</p>
-            <p>Congue enim ullamcorper erat volutpat quam ad parturient eget eros nisl, sociis eleifend dignissim venenatis quis donec mauris interdum proin vel natoque, purus est potenti magna velit facilisi nec consequat feugiat. Mus vehicula fusce litora gravida condimentum himenaeos facilisis, massa viverra scelerisque erat mattis posuere, nisl sapien habitant nec est libero. Ante ultricies diam ad morbi urna class quisque in dapibus nibh integer pulvinar aliquam pellentesque vel, sollicitudin curabitur ornare felis penatibus tincidunt eleifend maecenas ullamcorper feugiat curae sociosqu cras aptent.</p>
-            <br><h2>Tenemos los mejores campos!</h2>
+            <h1><?= $i_index_h1 ?></h1>
+            <h2><?= $i_index_h2 ?></h2>
+            <p><?= $i_index_p1 ?></p>
+            <p><?= $i_index_p2 ?></p>
+            <br><h2><?= $i_index_h22 ?></h2>
             <img width="49%" src="IMGs/exterior.jpg"/>
             <img width="49%" src="IMGs/interior.jpg"/>
         </div>
@@ -503,9 +503,9 @@ $teams_liga = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
                             }
                         }
                         if (existe===true) {
-                            event.target.style.backgroundColor = "coral";
+                            event.target.style.border = "2px solid coral";
                         } else {
-                            event.target.style.backgroundColor = "lightgreen";
+                            event.target.style.border = "2px solid lightgreen";
                         }
                     }
                 }

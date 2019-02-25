@@ -1,7 +1,7 @@
     <form action="usuario.php" method="post">
-        <input type="button" value="Apuntarse a la liga">
-        <input type="button" value="Reservas de campos">
-        <input type="button" value="Modificar datos">
+        <input type="button" value="<?= $i_apuntarse_boton ?>">
+        <input type="button" value="<?= $i_reservas_boton ?>">
+        <input type="button" value="<?= $i_modificar ?>">
         <input type="hidden" name="opciones_jugador">
     </form>
     <img src='<?= $equipo[0]['logo'] ?>' id="equipo"/>

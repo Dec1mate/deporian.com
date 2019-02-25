@@ -50,7 +50,7 @@ if(isset($_POST['cambios'])) {
     <div id="cabecera">
         <a href="index.php" ><h1>dep<img src="IMGs/balon.png" width="10px">rVereda</h1></a>
         <div id="idiomas">
-            <form action="usuario.php" method="post">
+            <form action="modificar.php" method="post">
                 <img src="IMGs/spanish.png" id="castellano"><br>
                 <img src="IMGs/uk.png" id="ingles">
                 <input type="hidden" name="lengua">
@@ -64,18 +64,18 @@ if(isset($_POST['cambios'])) {
     </div>
     <div id="form_mod">
         <form action="modificar.php" method="post" enctype="multipart/form-data">
-            <p>Nombre</p>
+            <p><?= $i_nombre ?></p>
             <input type="text" name="new_name">
-            <p>Edad</p>
+            <p><?= $i_edad ?></p>
             <input type="text" name="new_age">
-            <p>Altura</p>
+            <p><?= $i_altura ?></p>
             <input type="text" name="new_height">
-            <p>Foto</p>
+            <p><?= $i_logo ?></p>
             <input type="file" name="new_photo">
-            <p>Contrasenya nueva</p>
+            <p><?= $i_new_pass ?></p>
             <input type="password" name="new_pass"><br>
-            <input type="submit" value="Actualizar"><hr>
-            <input type="button" value="Eliminar cuenta">
+            <input type="submit" value="<?= $i_modificar_boton ?>"><hr>
+            <input type="button" value="<?= $i_eliminar_boton ?>">
 
             <input type="hidden" name="cambios">
         </form>

@@ -45,7 +45,7 @@ $datos = json_decode($data);
     <div id="cabecera">
         <a href="index.php" ><h1>dep<img src="IMGs/balon.png" width="10px">rVereda</h1></a>
         <div id="idiomas">
-            <form action="usuario.php" method="post">
+            <form action="reserva.php" method="post">
                 <img src="IMGs/spanish.png" id="castellano"><br>
                 <img src="IMGs/uk.png" id="ingles">
                 <input type="hidden" name="lengua">
@@ -58,8 +58,8 @@ $datos = json_decode($data);
         <a href="usuario.php" id="user"><div><img src='<?= $usuario[0]->getFoto() ?>' /></div><?= $usuario[0]->getNombre() ?></a>
     </div>
     <form action="reserva.php" method="post" id="botones_reserva">
-        <button type="button" value="interior">INTERIOR</button>
-        <button type="button" value="exterior">EXTERIOR</button>
+        <button type="button" value="interior"><?= $i_campo_1 ?></button>
+        <button type="button" value="exterior"><?= $i_campo_2 ?></button>
                <!--Aqui va la tabla-->
         <input type="hidden" name="hora_reserva">
         <input type="hidden" name="reserva">
@@ -145,19 +145,22 @@ $datos = json_decode($data);
                                                 temp_max = tiempos.list[i].main.temp_max;
                                             }
                                         }
-                                        let texto = document.createTextNode("Ha seleccionado reservar el campo para el dia " + fecha +"\nEse dia la temperatura sera de entre " + temp_min + " y " + temp_max + "ºC");
+                                        let texto = document.createTextNode("<?= $i_reserva_0[0] ?>" + fecha +"\n<?= $i_reserva_0[1] ?>" + temp_min + "<?= $i_reserva_0[2] ?>" + temp_max + "<?= $i_reserva_0[3] ?>");
                                         parrafo.appendChild(texto);
                                         let boton1 = document.createElement('button');
                                         boton1.setAttribute('type', 'button');
+                                        boton1.setAttribute('id', 'aceptar');
                                         let boton2 = document.createElement('button');
                                         boton2.setAttribute('type', 'button');
-                                        let texto_b1 = document.createTextNode("CONFIRMAR");
-                                        let texto_b2 = document.createTextNode("CANCELAR");
+                                        boton2.setAttribute('id', 'cancelar');
+                                        let texto_b1 = document.createTextNode("<?= $i_aceptar ?>");
+                                        let texto_b2 = document.createTextNode("<?= $i_cancelar ?>");
                                         boton1.appendChild(texto_b1);
                                         boton2.appendChild(texto_b2);
                                         divisor.appendChild(parrafo);
                                         divisor.appendChild(boton1);
                                         divisor.appendChild(boton2);
+                                        divisor.style = "white-space: pre";
 
                                         document.body.appendChild(difuminador);
                                         document.body.appendChild(divisor);
@@ -170,11 +173,12 @@ $datos = json_decode($data);
                                         let difuminador = document.createElement('div');
                                         difuminador.setAttribute('id', 'difuminador');
                                         let parrafo = document.createElement('p');
-                                        let texto = document.createTextNode("Su equipo no puede reservar el campo para este dia.");
+                                        let texto = document.createTextNode("<?= $i_reserva_1 ?>");
                                         parrafo.appendChild(texto);
                                         let boton1 = document.createElement('button');
                                         boton1.setAttribute('type', 'button');
-                                        let texto_b1 = document.createTextNode("ACEPTAR");
+                                        boton1.setAttribute('id', 'aceptar');
+                                        let texto_b1 = document.createTextNode("<?= $i_aceptar ?>");
                                         boton1.appendChild(texto_b1);
                                         divisor.appendChild(parrafo);
                                         divisor.appendChild(boton1);
@@ -188,15 +192,15 @@ $datos = json_decode($data);
                                         let difuminador = document.createElement('div');
                                         difuminador.setAttribute('id', 'difuminador');
                                         let parrafo = document.createElement('p');
-                                        let texto = document.createTextNode("Su equipo no puede reservar porque esta amonestado.");
+                                        let texto = document.createTextNode("<?= $i_reserva_2 ?>");
                                         parrafo.appendChild(texto);
                                         let boton1 = document.createElement('button');
                                         boton1.setAttribute('type', 'button');
-                                        let texto_b1 = document.createTextNode("ACEPTAR");
+                                        boton1.setAttribute('id', 'aceptar');
+                                        let texto_b1 = document.createTextNode("<?= $i_aceptar ?>");
                                         boton1.appendChild(texto_b1);
                                         divisor.appendChild(parrafo);
                                         divisor.appendChild(boton1);
-
                                         document.body.appendChild(difuminador);
                                         document.body.appendChild(divisor);
                                         document.getElementsByTagName('button')[2].onclick = desconfirmarReserva;
@@ -206,11 +210,11 @@ $datos = json_decode($data);
                                         let difuminador = document.createElement('div');
                                         difuminador.setAttribute('id', 'difuminador');
                                         let parrafo = document.createElement('p');
-                                        let texto = document.createTextNode("No puede reservar un campo con menos de 24h de antelacion.");
+                                        let texto = document.createTextNode("<?= $i_reserva_3 ?>");
                                         parrafo.appendChild(texto);
                                         let boton1 = document.createElement('button');
                                         boton1.setAttribute('type', 'button');
-                                        let texto_b1 = document.createTextNode("ACEPTAR");
+                                        let texto_b1 = document.createTextNode("<?= $i_aceptar ?>");
                                         boton1.appendChild(texto_b1);
                                         divisor.appendChild(parrafo);
                                         divisor.appendChild(boton1);
@@ -231,10 +235,6 @@ $datos = json_decode($data);
                             data = JSON.stringify(data);
                             httpRequest.send('comprobar='+data);
                         }
-
-
-
-
                     }
                 }
             }
@@ -267,25 +267,27 @@ $datos = json_decode($data);
                             hora = "21:00:00";
                         }
                         fecha = dia_nuevo + " " + hora;
-
                         let divisor = document.createElement('div');
                         divisor.setAttribute('id', 'confirmar');
                         let difuminador = document.createElement('div');
                         difuminador.setAttribute('id', 'difuminador');
                         let parrafo = document.createElement('p');
-                        let texto = document.createTextNode("Ha seleccionado cancelar la reserva para el dia " + fecha +"\nQuiere continuar con la cancelacion?");
+                        let texto = document.createTextNode("<?= $i_reserva_4[0] ?>" + fecha +"\n<?= $i_reserva_4[1] ?>");
                         parrafo.appendChild(texto);
                         let boton1 = document.createElement('button');
                         boton1.setAttribute('type', 'button');
+                        boton1.setAttribute('id', 'aceptar');
                         let boton2 = document.createElement('button');
                         boton2.setAttribute('type', 'button');
-                        let texto_b1 = document.createTextNode("CONFIRMAR");
-                        let texto_b2 = document.createTextNode("CANCELAR");
+                        boton2.setAttribute('id', 'cancelar');
+                        let texto_b1 = document.createTextNode("<?= $i_aceptar ?>");
+                        let texto_b2 = document.createTextNode("<?= $i_cancelar ?>");
                         boton1.appendChild(texto_b1);
                         boton2.appendChild(texto_b2);
                         divisor.appendChild(parrafo);
                         divisor.appendChild(boton1);
                         divisor.appendChild(boton2);
+                        divisor.style = "white-space: pre";
 
                         document.body.appendChild(difuminador);
                         document.body.appendChild(divisor);
@@ -326,6 +328,12 @@ $datos = json_decode($data);
         function cerrarSesion(event) {
             document.getElementsByTagName('input')[2].value = event.target.id;
             document.getElementsByTagName('form')[1].submit();
+        }
+        document.getElementsByTagName('img')[1].onclick = cambiarIdioma;
+        document.getElementsByTagName('img')[2].onclick = cambiarIdioma;
+        function cambiarIdioma(event) {
+            document.getElementsByTagName('input')[0].value = event.target.id;
+            document.getElementsByTagName('form')[0].submit();
         }
     </script>
 </body>

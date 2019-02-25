@@ -33,14 +33,14 @@ function obtenerDia(&$cont, $reservas, $partidos, $conexion) {
     <?php elseif ($partido == true) : ?>
         <td class="partido">
             <form action="partido.php" method="post">
-                <p class="date"><?= date("j", $cont) ?></p>
-                <div>
-                    <img src="<?= $equipos_part[0]['logo1'] ?>" />
-                    <i> - VS - </i>
-                    <img src="<?= $equipos_part[0]['logo2'] ?>" />
-                </div>
                 <input type="hidden" name="fecha" value="<?=$partidos[$l]['fecha']?>">
             </form>
+            <p class="date"><?= date("j", $cont) ?></p>
+            <div>
+                <img src="<?= $equipos_part[0]['logo1'] ?>" />
+                <i> - VS - </i>
+                <img src="<?= $equipos_part[0]['logo2'] ?>" />
+            </div>
         </td>
     <?php else: ?>
         <td><p class="date"><?= date("j", $cont) ?></p></td>

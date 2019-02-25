@@ -1,5 +1,7 @@
 <?php
+session_start();
 require_once "database/Connection.php";
+require_once "metodos.php";
 $conexion = Connection::make();
 $dias = [];
 $dias_db = [];
@@ -48,11 +50,11 @@ if (isset($_POST['accion'])) {
                     $festivo = true;
                 }
                 if($reservado1 == true) : ?>
-                    <td class="reservado">Reservado</td>
+                    <td class="reservado"><?= $i_reservado ?></td>
                 <?php elseif ($reservado2==true): ?>
                     <td class="reservado2"><?= $data['tema'] ?></td>
                 <?php elseif ($festivo==true): ?>
-                    <td class="festivo">Festivo</td>
+                    <td class="festivo"><?= $i_festivo ?></td>
                 <?php else: ?>
                     <td><?=$horas[$i]?></td>
                 <?php endif;

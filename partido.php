@@ -119,7 +119,7 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             <tr>
                 <td><?= $partido[0]['equipo_nombre_1'] ?></td>
                 <?php if($_SESSION['entidad']=='arbitro' && $partido[0]['goles_1']==null): ?>
-                    <td><button type="button">Puntuar partido</button></td>
+                    <td><button type="button" id="puntuar">Puntuar partido</button></td>
                 <?php else: ?>
                     <td></td>
                 <?php endif; ?>
@@ -162,7 +162,9 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
 </div>
 
 <script>
-    document.getElementsByTagName('button')[0].onclick = puntuar;
+    if(document.getElementsByTagName('button')[0]) {
+        document.getElementsByTagName('button')[0].onclick = puntuar;
+    }
 
     function puntuar() {
         let fechaPartido = "<?= $_POST['fecha'] ?>";

@@ -16,7 +16,7 @@ class Lista {
 
     public function anyadirNodoFinal($dato) {
         $aux = $this->inicio;
-        while($aux->siguiente!=NULL) {
+        while(isset($aux->siguiente)) {
             $aux = $aux->siguiente;
         }
         $aux->siguiente = new Nodo($dato);
@@ -31,7 +31,7 @@ class Lista {
     public function anyadirNodoPosicion($dato, $posicion) {
         $aux = $this->inicio;
         $cont = 1;
-        while($aux->siguiente!=NULL && $cont+1!=$posicion) {
+        while(isset($aux->siguiente) && $cont+1!=$posicion) {
             $aux = $aux->siguiente;
             $cont++;
         }
@@ -54,22 +54,35 @@ class Lista {
 
     public function eliminarNodoFinal() {
         $aux = $this->inicio;
-        while($aux->siguiente->siguiente!=NULL) {
+        while(isset($aux->siguiente->siguiente)) {
             $aux = $aux->siguiente;
         }
+        unset($aux->siguiente);
+    }
+
+    public function eliminarNodoSiguiente() {
+        $aux = $this->inicio;
         unset($aux->siguiente);
     }
 
     public function eliminarNodoPosicion($posicion) {
         $aux = $this->inicio;
         $cont = 1;
-        while($aux->siguiente!=NULL && $cont+1!=$posicion) {
+        while(isset($aux->siguiente) && $cont+1!=$posicion) {
             $aux = $aux->siguiente;
             $cont++;
         }
         $aux_nodo = $aux->siguiente->siguiente;
         unset($aux->siguiente);
         $aux->siguiente = $aux_nodo;
+    }
+
+    public function getNodoFinal() {
+        $aux = $this->inicio;
+        while(isset($aux->siguiente)) {
+            $aux = $aux->siguiente;
+        }
+        return $aux;
     }
 
     /* -- GETTERS & SETTERS -- */
