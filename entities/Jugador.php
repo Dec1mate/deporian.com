@@ -138,7 +138,7 @@ class Jugador {
                 'consumer_secret'=>'NbXofTGJ78kSoRoPoMFIuiJ1ziwi1shfuE8ORwiKhtTN9k0eXY',
                 'oauth_access_token'=>'1092417797588766720-tSwJjv0rArKBDAiGdWsJxWdZ4K0Uu5',
                 'oauth_access_token_secret'=>'WgQMDEOpJ77k0Vxb4QNZyrzkqqXdO5g0VNIhapbi3weX5');
-            //publicarTweet($settings, $texto);
+            publicarTweet($settings, $texto);
             if(count($nums_eq)==11) {
                 $this->empezarLiga();
             }

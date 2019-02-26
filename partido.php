@@ -7,13 +7,15 @@ if (isset($_SESSION['entidad'])) {
     $parameters=[':dni'=>$_SESSION['dni']];
     $stmt->execute($parameters);
     if($_SESSION['entidad']=="jugador") {
-        $usuario = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+        $stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+        $usuario = $stmt->fetch();
         $stmt2 = $conexion->prepare("SELECT logo FROM equipo WHERE nombre = :nombre");
-        $parameters2 = [':nombre'=>$usuario[0]->getEquipo()];
+        $parameters2 = [':nombre'=>$usuario->getEquipo()];
         $stmt2->execute($parameters2);
         $equipo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
     } else {
-        $usuario = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Arbitro");
+        $stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Arbitro");
+        $usuario = $stmt->fetch();
     }
 }
 if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
@@ -59,10 +61,10 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
     }
     if($_SESSION['entidad'] == 'jugador') {
         $stmt = $conexion->prepare("SELECT * FROM partido WHERE (equipo_nombre_1 = :equipo OR equipo_nombre_2 = :equipo) AND fecha = :fecha");
-        $parameters = [':equipo'=>$usuario[0]->getEquipo(), ':fecha'=>$_SESSION['fecha']];
+        $parameters = [':equipo'=>$usuario->getEquipo(), ':fecha'=>$_SESSION['fecha']];
     } else {
         $stmt = $conexion->prepare("SELECT * FROM partido WHERE arbitro_dni = :arbitro AND fecha = :fecha");
-        $parameters = [':arbitro'=>$usuario[0]->getDni(), 'fecha'=>$_SESSION['fecha']];
+        $parameters = [':arbitro'=>$usuario->getDni(), 'fecha'=>$_SESSION['fecha']];
     }
     $stmt->execute($parameters);
     $partido = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -107,7 +109,7 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             <input type="button" id="logout" value='<?= $i_boton_3 ?>'>
             <input type="hidden" name="cerrar">
         </form>
-        <a href="usuario.php" id="user"><div><img src='<?= $usuario[0]->getFoto() ?>' /></div><?= $usuario[0]->getNombre() ?></a>
+        <a href="usuario.php" id="user"><div><img src='<?= $usuario->getFoto() ?>' /></div><?= $usuario->getNombre() ?></a>
     </div>
     <div id="content_partido">
         <table align="center">

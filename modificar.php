@@ -7,30 +7,32 @@ if (isset($_SESSION['entidad'])) {
     $parameters=[':dni'=>$_SESSION['dni']];
     $stmt->execute($parameters);
     if($_SESSION['entidad']=="jugador") {
-        $usuario = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+        $stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+        $usuario = $stmt->fetch();
         $stmt2 = $conexion->prepare("SELECT logo FROM equipo WHERE nombre = :nombre");
-        $parameters2 = [':nombre'=>$usuario[0]->getEquipo()];
+        $parameters2 = [':nombre'=>$usuario->getEquipo()];
         $stmt2->execute($parameters2);
         $equipo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
     } else {
-        $usuario = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Arbitro");
+        $stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Arbitro");
+        $usuario = $stmt->fetch();
     }
 }
 if(isset($_POST['cambios'])) {
     if($_POST['new_name']!="") {
-        $usuario[0]->updateNombre($_POST['new_name']);
+        $usuario->updateNombre($_POST['new_name']);
     }
     if($_POST['new_age']!="") {
-        $usuario[0]->updateEdad($_POST['new_age']);
+        $usuario->updateEdad($_POST['new_age']);
     }
     if($_POST['new_height']!="") {
-        $usuario[0]->updateAltura($_POST['new_height']);
+        $usuario->updateAltura($_POST['new_height']);
     }
     if($_FILES['new_photo']['size']!=0) {
-        $usuario[0]->updateFoto($_FILES['new_photo']);
+        $usuario->updateFoto($_FILES['new_photo']);
     }
     if($_POST['new_pass']!="") {
-        $usuario[0]->updateContrasenya($_POST['new_pass']);
+        $usuario->updateContrasenya($_POST['new_pass']);
     }
     header('Location: usuario.php');
 }
@@ -60,7 +62,7 @@ if(isset($_POST['cambios'])) {
             <input type="button" id="logout" value='<?= $i_boton_3 ?>'>
             <input type="hidden" name="cerrar">
         </form>
-        <a href="usuario.php" id="user"><div><img src='<?= $usuario[0]->getFoto() ?>' /></div><?= $usuario[0]->getNombre() ?></a>
+        <a href="usuario.php" id="user"><div><img src='<?= $usuario->getFoto() ?>' /></div><?= $usuario->getNombre() ?></a>
     </div>
     <div id="form_mod">
         <form action="modificar.php" method="post" enctype="multipart/form-data">
@@ -81,15 +83,56 @@ if(isset($_POST['cambios'])) {
         </form>
     </div>
     <script>
+        document.body.onload = limpiarCampos;
         document.getElementById('logout').onclick = cerrarSesion;
         document.getElementsByTagName('img')[1].onclick = cambiarIdioma;
         document.getElementsByTagName('img')[2].onclick = cambiarIdioma;
-        document.getElementsByTagName('input')[8].onclick = eliminarCuenta;
+        document.getElementsByTagName('input')[9].onclick = confirmarEliminarCuenta;
+
+        function limpiarCampos() {
+            document.getElementsByName('new_height')[0].value="";
+            document.getElementsByName('new_pass')[0].value="";
+        }
+
+        function confirmarEliminarCuenta() {
+            let divisor = document.createElement('div');
+            divisor.setAttribute('id', 'confirmar');
+            let difuminador = document.createElement('div');
+            difuminador.setAttribute('id', 'difuminador');
+            let parrafo = document.createElement('p');
+            let texto = document.createTextNode("<?= $i_eliminar_cuenta[0] ?>\n<?= $i_eliminar_cuenta[1] ?>");
+            parrafo.appendChild(texto);
+            let boton1 = document.createElement('button');
+            boton1.setAttribute('type', 'button');
+            boton1.setAttribute('id', 'aceptar');
+            let boton2 = document.createElement('button');
+            boton2.setAttribute('type', 'button');
+            boton2.setAttribute('id', 'cancelar');
+            let texto_b1 = document.createTextNode("<?= $i_aceptar ?>");
+            let texto_b2 = document.createTextNode("<?= $i_cancelar ?>");
+            boton1.appendChild(texto_b1);
+            boton2.appendChild(texto_b2);
+            divisor.appendChild(parrafo);
+            divisor.appendChild(boton1);
+            divisor.appendChild(boton2);
+            divisor.style = "white-space: pre";
+
+            document.body.appendChild(difuminador);
+            document.body.appendChild(divisor);
+
+            document.getElementsByTagName('button')[0].onclick = eliminarCuenta;
+            document.getElementsByTagName('button')[1].onclick = desconfirmarEliminacion;
+        }
 
         function eliminarCuenta() {
             document.getElementsByTagName('form')[2].action = "index.php";
             document.getElementsByTagName('input')[9].name = "eliminar";
             document.getElementsByTagName('form')[2].submit();
+        }
+
+        function desconfirmarEliminacion() {
+            document.body.removeChild(document.getElementById('difuminador'));
+            document.body.removeChild(document.getElementById('confirmar'));
         }
 
         function cambiarIdioma(event) {

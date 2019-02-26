@@ -10,21 +10,24 @@ if (isset($_SESSION['entidad'])) {
     $parameters=[':dni'=>$_SESSION['dni']];
     $stmt->execute($parameters);
     if($_SESSION['entidad']=="jugador") {
-        $usuario = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+        $stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+        $usuario = $stmt->fetch();
         $stmt2 = $conexion->prepare("SELECT logo FROM equipo WHERE nombre = :nombre");
-        $parameters2 = [':nombre'=>$usuario[0]->getEquipo()];
+        $parameters2 = [':nombre'=>$usuario->getEquipo()];
         $stmt2->execute($parameters2);
         $equipo = $stmt2->fetchAll(PDO::FETCH_ASSOC);
         $stmt_res = $conexion->prepare("SELECT * FROM reserva WHERE equipo_nombre = :equipo");
         $stmt_par = $conexion->prepare("SELECT * FROM partido WHERE equipo_nombre_1 = :equipo OR equipo_nombre_2 = :equipo");
-        $parameters = [':equipo'=>$usuario[0]->getEquipo()];
-        $entity = $usuario[0]->getEquipo();
+        $parameters = [':equipo'=>$usuario->getEquipo()];
+        $entity = $usuario->getEquipo();
+        $cant_ligas = $usuario->contarLigas();
     } else {
-        $usuario = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Arbitro");
+        $stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+        $usuario = $stmt->fetch();
         $stmt_res = $conexion->prepare("SELECT * FROM reserva WHERE arbitro_dni = :dni");
         $stmt_par = $conexion->prepare("SELECT * FROM partido WHERE arbitro_dni = :dni");
-        $parameters = [':dni'=>$usuario[0]->getDni()];
-        $entity = $usuario[0]->getDni();
+        $parameters = [':dni'=>$usuario->getDni()];
+        $entity = $usuario->getDni();
     }
     $stmt_res->execute($parameters);
     $stmt_par->execute($parameters);
@@ -34,14 +37,9 @@ if (isset($_SESSION['entidad'])) {
 }
 if (isset($_POST['opciones_jugador'])) {
     if ($_POST['opciones_jugador'] == "apuntarse") {
-        $usuario[0]->apuntarse();
+        $usuario->apuntarse();
     }
 }
-
-
-
-
-
 ?>
 <!doctype html>
 <html lang="en">
@@ -69,15 +67,15 @@ if (isset($_POST['opciones_jugador'])) {
             <input type="button" id="logout" value='<?= $i_boton_3 ?>'>
             <input type="hidden" name="cerrar">
         </form>
-        <div id="user"><div><img id="userfoto" src='<?= $usuario[0]->getFoto() ?>' /></div><?= $usuario[0]->getNombre() ?></div>
+        <div id="user"><div><img id="userfoto" src='<?= $usuario->getFoto() ?>' /></div><?= $usuario->getNombre() ?></div>
     </div>
     <div id="info">
-        <img src='<?= $usuario[0]->getFoto() ?>' />
+        <img src='<?= $usuario->getFoto() ?>' />
         <div id="datos">
-            <h2><?= $usuario[0]->getNombre() ?></h2>
+            <h2><?= $usuario->getNombre() ?></h2>
             <hr>
             <?php if($_SESSION['entidad']=="jugador"):?>
-            <h3><?= $usuario[0]->getEquipo() ?> <img src='<?= $equipo[0]['logo'] ?>' height="20px"/></h3>
+            <h3><?= $usuario->getEquipo() ?> <img src='<?= $equipo[0]['logo'] ?>' height="20px"/></h3>
             <?php endif;?>
         </div>
         <!-- AQUI VA EL CALENDARIO -->

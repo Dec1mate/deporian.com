@@ -43,4 +43,7 @@
     $i_campo_2 = "EXTERIOR";
     $i_reservado = "Reservado";
     $i_festivo = "Festivo";
+    $i_eliminar_cuenta = ["Ha seleccionado eliminar su cuenta.", "Desea continuar?"];
+    $i_apuntar_liga = ['Ha seleccionado apuntar a su equipo (', ') a la ', ' edicion de la liga DeporIan.', 'Desea continuar?'];
+    $i_error_apuntar = ['ERROR', 'No puede apuntarse si ya hay una liga en marcha.', 'Vuelva a intentarlo a partir del '];
 ?>

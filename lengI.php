@@ -43,4 +43,7 @@
     $i_campo_2 = "OUTER";
     $i_reservado = "Booked";
     $i_festivo = "Holiday";
+    $i_eliminar_cuenta = ["You chose to delete your account.", "Do you wish to continue?"];
+    $i_apuntar_liga = ['You chose to add your team (', ') to the ', ' edition of DeporIan league.', 'Do you wish to continue?'];
+    $i_error_apuntar = ['ERROR', 'You can not join an ongoing league.', 'Try again after '];
 ?>

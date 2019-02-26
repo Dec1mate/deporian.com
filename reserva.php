@@ -6,7 +6,8 @@ require_once "metodos.php";
 $stmt1 = $conexion->prepare("SELECT * FROM ".$_SESSION['entidad']." WHERE dni = :dni");
 $parameters = [':dni'=>$_SESSION['dni']];
 $stmt1->execute($parameters);
-$usuario = $stmt1->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+$stmt1->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, "Jugador");
+$usuario = $stmt1->fetch();
 
 
 if(isset($_POST['opcion'])) {
@@ -15,11 +16,11 @@ if(isset($_POST['opcion'])) {
         $stmt1->execute();
         $arbitros = $stmt1->fetchAll(PDO::FETCH_ASSOC);
         $stmt2 = $conexion->prepare("INSERT INTO reserva(equipo_nombre, arbitro_dni, campo_id, fecha) VALUES (:equipo, :arbitro, :campo, :fecha)");
-        $parameters2 = [':equipo'=>$usuario[0]->getEquipo(), ':arbitro'=>$arbitros[rand(0, count($arbitros)-1)]['dni'], ':campo'=>intval($_POST['reserva']), ':fecha'=>$_POST['hora_reserva']];
+        $parameters2 = [':equipo'=>$usuario->getEquipo(), ':arbitro'=>$arbitros[rand(0, count($arbitros)-1)]['dni'], ':campo'=>intval($_POST['reserva']), ':fecha'=>$_POST['hora_reserva']];
         $stmt2->execute($parameters2);
     } else if($_POST['opcion']=='cancelar') {
         $stmt = $conexion->prepare("DELETE FROM reserva WHERE equipo_nombre=:equipo AND fecha=:fecha AND campo_id=:campo");
-        $parameters = [':equipo'=>$usuario[0]->getEquipo(), ':fecha'=>$_POST['hora_reserva'], ':campo'=>intval($_POST['reserva'])];
+        $parameters = [':equipo'=>$usuario->getEquipo(), ':fecha'=>$_POST['hora_reserva'], ':campo'=>intval($_POST['reserva'])];
         $stmt->execute($parameters);
     }
 
@@ -27,7 +28,7 @@ if(isset($_POST['opcion'])) {
 
 $clave = "http://api.openweathermap.org/data/2.5/forecast?lat=39.594189&lon=-0.54474&APPID=d0cb0d8b429769a6e1105782251c99aa&units=metric&lang=es";
 $data = file_get_contents($clave);
-$datos = json_decode($data);
+//$datos = json_decode($data);
 
 ?>
 <!doctype html>
@@ -55,7 +56,7 @@ $datos = json_decode($data);
             <input type="button" id="logout" value='<?= $i_boton_3 ?>'>
             <input type="hidden" name="cerrar">
         </form>
-        <a href="usuario.php" id="user"><div><img src='<?= $usuario[0]->getFoto() ?>' /></div><?= $usuario[0]->getNombre() ?></a>
+        <a href="usuario.php" id="user"><div><img src='<?= $usuario->getFoto() ?>' /></div><?= $usuario->getNombre() ?></a>
     </div>
     <form action="reserva.php" method="post" id="botones_reserva">
         <button type="button" value="interior"><?= $i_campo_1 ?></button>
@@ -99,14 +100,14 @@ $datos = json_decode($data);
                 document.getElementsByTagName('input')[4].value="2";
                 event.target.setAttribute('id', 'selected');
                 document.getElementsByTagName('button')[0].setAttribute('id', "");
-                let data = new Datos('2', '<?= $usuario[0]->getEquipo() ?>', null);
+                let data = new Datos('2', '<?= $usuario->getEquipo() ?>', null);
                 data = JSON.stringify(data);
                 httpRequest.send('accion='+data);
             } else {
                 document.getElementsByTagName('input')[4].value="1";
                 event.target.setAttribute('id', 'selected');
                 document.getElementsByTagName('button')[1].setAttribute('id', "");
-                let data = new Datos('1', '<?= $usuario[0]->getEquipo() ?>', null);
+                let data = new Datos('1', '<?= $usuario->getEquipo() ?>', null);
                 data = JSON.stringify(data);
                 httpRequest.send('accion='+data);
             }
@@ -227,11 +228,11 @@ $datos = json_decode($data);
                             }
                         }
                         if(document.getElementsByTagName('input')[4].value==="2") {
-                            let data = new Datos('1', '<?= $usuario[0]->getEquipo() ?>', fecha);
+                            let data = new Datos('1', '<?= $usuario->getEquipo() ?>', fecha);
                             data = JSON.stringify(data);
                             httpRequest.send('comprobar='+data);
                         } else {
-                            let data = new Datos('2', '<?= $usuario[0]->getEquipo() ?>', fecha);
+                            let data = new Datos('2', '<?= $usuario->getEquipo() ?>', fecha);
                             data = JSON.stringify(data);
                             httpRequest.send('comprobar='+data);
                         }

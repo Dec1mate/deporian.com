@@ -35,10 +35,6 @@ class Lista {
             $aux = $aux->siguiente;
             $cont++;
         }
-        /*$n = new Nodo($dato);
-        $n->siguiente = $aux->siguiente;
-        $aux->siguiente = $n;*/
-
         $aux_nodo = $aux->siguiente;
         $aux->siguiente = new Nodo($dato);
         $aux->siguiente->siguiente = $aux_nodo;
