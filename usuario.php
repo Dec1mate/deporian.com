@@ -35,6 +35,20 @@ if (isset($_SESSION['entidad'])) {
     $partidos = $stmt_par->fetchAll(PDO::FETCH_ASSOC);
 
 }
+if (isset($_POST['equipo_amonest'])) {
+    $stmt1 = $conexion->prepare("SELECT * FROM amonesta WHERE equipo_nombre = :equipo");
+    $parameters1 = [':equipo'=>$_POST['equipo_amonest']];
+    $stmt1->execute($parameters1);
+    $amonestaciones_eq = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+    if(!empty($amonestaciones_eq)) {
+        $stmt2 = $conexion->prepare("UPDATE amonesta SET arbitro_dni = :dni, fecha = :fecha WHERE equipo_nombre = :equipo");
+        $parameters2 = [':dni'=>$_SESSION['dni'], ':fecha'=>$_POST['fecha_amonest'], ':equipo'=>$_POST['equipo_amonest']];
+    } else {
+        $stmt2 = $conexion->prepare("INSERT INTO amonesta VALUES(:dni, :equipo, :fecha)");
+        $parameters2 = [':dni'=>$_SESSION['dni'], ':equipo'=>$_POST['equipo_amonest'], ':fecha'=>$_POST['fecha_amonest']];
+    }
+    $stmt2->execute($parameters2);
+}
 if (isset($_POST['opciones_jugador'])) {
     if ($_POST['opciones_jugador'] == "apuntarse") {
         $usuario->apuntarse();
