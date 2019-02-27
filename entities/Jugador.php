@@ -85,23 +85,29 @@ class Jugador {
 
     public function apuntarse() {
         $conexion = Connection::make();
+        //Comprobamos si hay alguna liga con menos de 12 equipos apuntados en ella actualmente
         $stmt1 = $conexion->prepare("select equipo_nombre from pertenece where 12>(select count(*) from pertenece group by liga_edicion);");
         $stmt1->execute();
         $nums_eq = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+        //Si encontramos algun resultado
         if (empty($nums_eq)) {
+            //Si no hay ninguna liga en total creamos una nueva
             if ($this->contarLigas()==0) {
                 $liga_actual=1;
                 $stmt3 = $conexion->prepare("INSERT INTO liga VALUES()");
                 $stmt3->execute();
                 $this->anyadirEquipo($nums_eq, $liga_actual);
             } else {
+                //Si ya hay alguna liga, comprobamos con la fecha de su ultimo partido si ya se ha acabado o esta en marcha
                 $stmt2 = $conexion->prepare("select MAX(P.fecha) as fecha from partido P, liga L where L.edicion = P.liga_edicion and L.edicion=(select MAX(edicion) from liga);");
                 $stmt2->execute();
                 $fecha_ult_partido = $stmt2->fetchAll(PDO::FETCH_ASSOC);
                 $dia_act = date("Y-m-d H:i:s", time());
                 if ($fecha_ult_partido[0]['fecha']>=$dia_act) {
+                    //Si no ha acabado aun
                     echo "Error, ya hay una liga en marcha";
                 } else {
+                    //Si ya ha acabado creamos una nueva
                     $liga_actual = $this->contarLigas() + 1;
                     $stmt3 = $conexion->prepare("INSERT INTO liga VALUES()");
                     $stmt3->execute();
@@ -109,11 +115,13 @@ class Jugador {
                 }
             }
         } else {
+            //Si existe una liga con menos de 12 equipos, añadimos el nuestro
             $liga_actual = $this->contarLigas();
             $this->anyadirEquipo($nums_eq, $liga_actual);
         }
     }
 
+    //Esta function cuenta las ligas diferentes guardadas en la base de datos
     public function contarLigas() {
         $conexion = Connection::make();
         $stmt_pre = $conexion->prepare("SELECT * FROM liga");
@@ -124,14 +132,21 @@ class Jugador {
 
     public function anyadirEquipo($nums_eq, $liga_actual) {
         $conexion = Connection::make();
+        //Comprobamos si nuestro equipo ya pertenece a la liga
         $stmt_pre = $conexion->prepare("SELECT * FROM pertenece WHERE equipo_nombre = :equipo AND liga_edicion = :liga");
         $parameters = [':equipo'=>$this->equipo, ':liga'=>$liga_actual];
         $stmt_pre->execute($parameters);
         $result = $stmt_pre->fetchAll(PDO::FETCH_ASSOC);
+        //En caso negativo lo añadimos
         if (!$result) {
             $stmt = $conexion->prepare("INSERT INTO pertenece VALUES(:equipo, :liga)");
             $parameters = [':equipo'=>$this->equipo, ':liga'=>$liga_actual];
             $stmt->execute($parameters);
+            //Y ponemos sus puntos a 0
+            $stmt_puntos = $conexion->prepare("UPDATE equipo SET puntos = 0 WHERE nombre = :equipo");
+            $parameters_puntos = [':equipo'=>$this->equipo];
+            $stmt_puntos->execute($parameters_puntos);
+            //Y ponemos un Tweet celebrando que nuestro equipo se ha registrado
             $texto = "El equipo ".$this->equipo." se ha inscrito a la ".$liga_actual." edicion de la liga DeporIan";
             $settings = array(
                 'consumer_key'=>'72xgvwIlNfSotN66afqZGjASG',
@@ -139,75 +154,35 @@ class Jugador {
                 'oauth_access_token'=>'1092417797588766720-tSwJjv0rArKBDAiGdWsJxWdZ4K0Uu5',
                 'oauth_access_token_secret'=>'WgQMDEOpJ77k0Vxb4QNZyrzkqqXdO5g0VNIhapbi3weX5');
             publicarTweet($settings, $texto);
+            //Si con nuestro equipo llegamos al total de 12 que necesita la liga, la empezamos
             if(count($nums_eq)==11) {
                 $this->empezarLiga();
             }
+        //En caso positivo sale un mensaje feo
         } else {
             echo "ERROR EL EQUIPO YA ESTA INSCRITO EN ESA LIGA!";
         }
     }
 
     public function empezarLiga() {
-        set_time_limit(600);
         $conexion = Connection::make();
         $fecha = time();
         $horas = ['09:00:00', '11:00:00', '13:00:00', '17:00:00', '19:00:00', '21:00:00'];
+        //Guardamos todos los equipos que pertenecen a la liga actual
         $stmt = $conexion->prepare("SELECT equipo_nombre FROM pertenece WHERE liga_edicion = :liga");
         $parameters = [':liga'=>$this->contarLigas()];
         $stmt->execute($parameters);
         $equipos_liga = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        //Ponemos sus puntos a 0
         $stmt_reiniciar = $conexion->prepare("UPDATE equipo SET puntos = 0 WHERE nombre = :equipo");
         for ($i=0; $i<count($equipos_liga)-1; $i++) {
             $parameters_reiniciar = [':equipo'=>$equipos_liga[$i]['equipo_nombre']];
             $stmt_reiniciar->execute($parameters_reiniciar);
         }
 
-        /*for ($i=0; $i<11; $i++) {
-            $fecha += 604800;
-            if(date("l", $fecha)!="Saturday" && $i==0) {
-                do {
-                    $fecha += 86400;
-                } while(date("l", $fecha)!="Saturday");
-            }
-            $fechas = [date("Y-m-d", $fecha), date("Y-m-d", $fecha + 86400)];
-            $equipos_aux = $equipos_liga;
-            do {
-                shuffle($equipos_aux);
-                $foo = false;
-                for($k=0; $k<6; $k++) {
-                    $stmt2 = $conexion->prepare("SELECT equipo_nombre_1 FROM partido WHERE liga_edicion = :liga AND ((equipo_nombre_1 = :equipo1 AND equipo_nombre_2 = :equipo2) OR (equipo_nombre_1 = :equipo2 AND equipo_nombre_2 = :equipo1))");
-                    $parameters2 = [':liga'=>$this->contarLigas(), ':equipo1'=>$equipos_aux[($k*2)]['equipo_nombre'], ':equipo2'=>$equipos_aux[($k*2) + 1]['equipo_nombre']];
-                    $stmt2->execute($parameters2);
-                    $existe = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-                    if(!empty($existe)) {
-                        $foo = true;
-                    }
-                }
-            } while ($foo == true);
-            for ($j=0; $j<6; $j++) {
-                $stmt_arb = $conexion->prepare("SELECT * FROM arbitro");
-                $stmt_arb->execute();
-                $arbitros = $stmt_arb->fetchAll(PDO::FETCH_ASSOC);
-                $stmt_camp = $conexion->prepare("SELECT * FROM campo");
-                $stmt_camp->execute();
-                $campos = $stmt_camp->fetchAll(PDO::FETCH_ASSOC);
-                do {
-                    $fecha_nueva = $fechas[rand(0, count($fechas)-1)]." ".$horas[rand(0, count($horas)-1)];
-                    $campo_nuevo = $campos[rand(0, count($campos)-1)];
-                    $arbitro_nuevo = $arbitros[rand(0, count($arbitros)-1)];
-                    $stmt_aux = $conexion->prepare("SELECT * FROM partido WHERE fecha = :fecha AND campo_id = :campo AND NOT EXISTS (SELECT * FROM partido WHERE fecha = :fecha AND campo_id <> :campo AND arbitro_dni = :dni);");
-                    $parameters_aux = [':fecha'=>$fecha_nueva, ':campo'=>$campo_nuevo['id'], ':dni'=>$arbitro_nuevo['dni']];
-                    $stmt_aux->execute($parameters_aux);
-                    $partido = $stmt_aux->fetchAll(PDO::FETCH_ASSOC);
-                } while(count($partido)>0);
-                $num_ligas = $this->contarLigas();
-                $stmt_meter = $conexion->prepare("INSERT INTO partido(equipo_nombre_1, equipo_nombre_2, arbitro_dni, campo_id, fecha, jornada_numero, liga_edicion) VALUES (:equipo1, :equipo2, :arbitro, :campo, :fecha, :jornada, :liga)");
-                $parameters_meter = [':equipo1'=>$equipos_aux[($j*2)]['equipo_nombre'], ':equipo2'=>$equipos_aux[($j*2)+1]['equipo_nombre'], ':arbitro'=>$arbitro_nuevo['dni'], ':campo'=>$campo_nuevo['id'], ':fecha'=>$fecha_nueva, ':jornada'=>$i+1, ':liga'=>$num_ligas];
-                $stmt_meter->execute($parameters_meter);
-            }
-        }*/
-
+        //Desordenamos el array de equipos para hacer los partidos mas aleatorios
         shuffle($equipos_liga);
+        //Creamos dos listas con el nodo inicial los primeros dos equipos
         $lista_A = new Lista($equipos_liga[0]['equipo_nombre']);
         $lista_B = new Lista($equipos_liga[1]['equipo_nombre']);
         //Arbitros
@@ -219,6 +194,7 @@ class Jugador {
         $stmt_camp->execute();
         $campos = $stmt_camp->fetchAll(PDO::FETCH_ASSOC);
 
+        //Dividimos los equipos en las dos listas
         for($i=2; $i<12; $i++) {
             if($i%2==0) {
                 $lista_A->anyadirNodoFinal($equipos_liga[$i]['equipo_nombre']);
@@ -227,7 +203,13 @@ class Jugador {
             }
         }
 
+
         $stmt_anyadir_partido = $conexion->prepare("INSERT INTO partido(equipo_nombre_1, equipo_nombre_2, arbitro_dni, campo_id, fecha, jornada_numero, liga_edicion) VALUES (:equipo1, :equipo2, :arbitro, :campo, :fecha, :jornada, :liga)");
+        //Por cada jornada haremos lo siguiente:
+        //Creamos las fechas de los partidos
+        //Hacemos que los equipos se enfrenten en orden de lista
+        //Cogemos primer valor de la lista 2 y lo ponemos como segundo valor de la lista 1
+        //Cogemos el ultimo valor de la lista 1 y lo ponemos como ultimo valor de la lista 2
         for($k = 1; $k<12; $k++) {
             $fecha += 604800;
             if(date("l", $fecha)!="Saturday" && $k==1) {
@@ -242,6 +224,7 @@ class Jugador {
             $equipo_aux_2 = $lista_A->getNodoFinal()->dato;
             for($l=0; $l<6; $l++) {
                 do {
+                    //Sacamos dia para el partido, arbitro y campo hasta que encontremos una combinacion no usada ya en esa jornada
                     $dia_nuevo = $fechas[rand(0, count($fechas)-1)];
                     $fecha_nueva = $dia_nuevo." ".$horas[rand(0, count($horas)-1)];
                     $campo_nuevo = $campos[rand(0, count($campos)-1)];

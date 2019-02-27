@@ -71,41 +71,6 @@ class Arbitro {
         $stmt->execute($parameters);
     }
 
-    public function amonestar($equipo, $fecha) {
-        $conexion=Connection::make();
-        $stmt = $conexion->prepare("INSERT INTO amonesta VALUES (:dni, :equipo, :fecha)");
-        $parameters = [':dni'=>$this->dni, ':equipo'=>$equipo, ':fecha'=>$fecha];
-        $stmt->execute($parameters);
-    }
-
-    public function ponerResultado($equipo1, $equipo2, $goles1, $goles2, $fecha) {
-        $conexion = Connection::make();
-        $stmt1 = $conexion->prepare("UPDATE partido SET goles_1 = :goles1, goles_2 = :goles2 WHERE fecha = :fecha AND arbitro_dni = :dni");
-        $parameters1 = [':goles1'=>$goles1, ':goles2'=>$goles2, ':fecha'=>$fecha, ':dni'=>$this->dni];
-        $stmt1->execute($parameters1);
-        $stmt2 = $conexion->prepare("SELECT puntos FROM equipo WHERE nombre = :nombre1 or nombre = :nombre2");
-        $parameters2 = [':nombre1'=>$equipo1, ':nombre2'=>$equipo2];
-        $stmt2->execute($parameters2);
-        $puntos = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-        $stmt3 = $conexion->prepare("UPDATE equipo SET puntos = :puntos WHERE nombre = :nombre");
-        if($goles1>$goles2) {
-            $parameters3 = [':puntos'=>$puntos[0]['puntos']+3, ':nombre'=>$equipo1];
-            $stmt3->execute($parameters3);
-        } else if($goles1<$goles2) {
-            $parameters3 = [':puntos'=>$puntos[1]['puntos']+3, ':nombre'=>$equipo2];
-            $stmt3->execute($parameters3);
-        } else {
-            $parameters3_1 = [':puntos'=>$puntos[0]['puntos']+1, ':nombre'=>$equipo1];
-            $stmt3->execute($parameters3_1);
-            $parameters3_2 = [':puntos'=>$puntos[1]['puntos']+1, ':nombre'=>$equipo2];
-            $stmt3->execute($parameters3_2);
-        }
-        //faltan goles y tweets
-        for($i=0; $i<$goles1; $i++) {
-
-        }
-    }
-
     /* -- GETTERS Y SETTERS -- */
 
     public function getDni(): string {

@@ -6,6 +6,7 @@ $conexion = Connection::make();
 $dias = [];
 $dias_db = [];
 $dias_sem = [];
+//Sacamos la fecha actual y los 5 dias siguientes
 $hoy = time() + 86400;
 $horas = ['15:00:00', '18:00:00', '21:00:00'];
 for ($i=0; $i<5; $i++) {
@@ -75,14 +76,12 @@ if(isset($_POST['comprobar'])) {
     $stmt->execute($parameters);
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmt2 = $conexion->prepare("SELECT * FROM amonesta WHERE equipo_nombre = :equipo");
+    $stmt2 = $conexion->prepare("SELECT MAX(fecha) as fecha FROM amonesta WHERE equipo_nombre = :equipo");
     $parameters2 = [':equipo'=>$data['tema']];
     $stmt2->execute($parameters2);
     $amonestaciones = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-
-
-    if ($amonestaciones) {
+    if ($amonestaciones[0]['fecha']<date("Y-m-d H:i:s", time() + 2592000)) {
         echo "amonestado";
     } else if(date("Y-m-d H:i:s", time() + 86400)<=$data['fech']) {
         if ($result) {

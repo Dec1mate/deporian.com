@@ -1,6 +1,6 @@
 <form action="usuario.php" method="post">
     <input type="button" value="<?= $i_modificar ?>">
-    <input type="button" value="Amonestar">
+    <input type="button" value="<?= $i_amonestar_btn ?>">
     <input type="hidden" name="opciones_jugador">
 </form>
 <script>
@@ -21,13 +21,13 @@
             if(httpRequest.readyState===4) {
                 if(httpRequest.status === 200) {
                     if(httpRequest.responseText == "opcion1") {
-                        //El arbitro no tiene ninguna reserva en su calendario
+                        //El arbitro no tiene ninguna reserva en su calendario o el equipo de la reserva ya ha sido amonestado
                         let divisor = document.createElement('div');
                         divisor.setAttribute('id', 'confirmar');
                         let difuminador = document.createElement('div');
                         difuminador.setAttribute('id', 'difuminador');
                         let parrafo = document.createElement('p');
-                        let texto = document.createTextNode("Prueba 1");
+                        let texto = document.createTextNode("<?= $i_error_amonestar ?>");
                         parrafo.appendChild(texto);
                         let boton1 = document.createElement('button');
                         boton1.setAttribute('type', 'button');
@@ -36,14 +36,13 @@
                         boton1.appendChild(texto_b1);
                         divisor.appendChild(parrafo);
                         divisor.appendChild(boton1);
-                        divisor.style = "white-space: pre";
 
                         document.body.appendChild(difuminador);
                         document.body.appendChild(divisor);
 
                         document.getElementsByTagName('button')[2].onclick = desconfirmar;
                     } else {
-                        //Doble select de opciones (dia/equipo)
+                        //Encuentra los partidos que ha supervisado
                         let divisor = document.createElement('div');
                         divisor.setAttribute('id', 'confirmar');
                         let difuminador = document.createElement('div');
@@ -57,7 +56,6 @@
                         let texto_b1 = document.createTextNode("<?= $i_aceptar ?>");
                         boton1.appendChild(texto_b1);
                         divisor.appendChild(boton1);
-                        divisor.style = "white-space: pre";
 
                         document.body.appendChild(difuminador);
                         document.body.appendChild(divisor);

@@ -23,22 +23,30 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
         $_SESSION['fecha'] = $_POST['fecha'];
     }
     if(isset($_POST['goles1'])) {
+        //Si le ha llegado el POST de goles
+        //Hacemos un UPDATE de los goles de ambos equipos
         $stmt_partido = $conexion->prepare("UPDATE partido SET goles_1 = :goles1, goles_2 = :goles2 WHERE (equipo_nombre_1 = :equipo1 AND equipo_nombre_2 = :equipo2)");
         $parameters_partido = [':goles1'=>$_POST['goles1'], ':goles2'=>$_POST['goles2'], ':equipo1'=>$_POST['equipo1'], ':equipo2'=>$_POST['equipo2']];
         $stmt_partido->execute($parameters_partido);
+        //Preparamos el statement para cambiar los puntos dependiendo de quien ha ganado
         $stmt_puntos = $conexion->prepare("UPDATE equipo SET puntos = puntos + :cant WHERE nombre = :equipo");
+        //Si ha ganado el equipo 1
         if($_POST['goles1']>$_POST['goles2']) {
             $parameters_puntos = [':cant'=>3, ':equipo'=>$_POST['equipo1']];
             $stmt_puntos->execute($parameters_puntos);
+        //Si ha ganado el equipo 2
         } else if($_POST['goles1']<$_POST['goles2']) {
             $parameters_puntos = [':cant'=>3, ':equipo'=>$_POST['equipo2']];
             $stmt_puntos->execute($parameters_puntos);
+        //Si han empatado
         } else {
             $parameters_puntos1 = [':cant'=>1, ':equipo'=>$_POST['equipo1']];
             $stmt_puntos->execute($parameters_puntos1);
             $parameters_puntos2 = [':cant'=>1, ':equipo'=>$_POST['equipo2']];
             $stmt_puntos->execute($parameters_puntos2);
         }
+        //Añadimos a los jugadores los goles que han metido (en orden alfabetico)
+        //Descargamos los jugadores
         $goles_equipo_1 = $_POST['goles_jugadores_1'];
         $goles_equipo_2 = $_POST['goles_jugadores_2'];
         $stmt2 = $conexion->prepare("SELECT * FROM jugador WHERE equipo = :equipo ORDER BY nombre");
@@ -49,6 +57,7 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
         $stmt2->execute($parameters2);
         $jugadores2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
         $stmt_goles = $conexion->prepare("UPDATE jugador SET num_goles = num_goles + :cant WHERE dni = :dni");
+        //Los recorremos y les hacemos un UPDATE a los goles
         for ($i=0; $i<count($goles_equipo_1); $i++) {
             $parameters_goles = [':cant'=>$goles_equipo_1[$i], ':dni'=>$jugadores1[$i]['dni']];
             $stmt_goles->execute($parameters_goles);
@@ -57,8 +66,27 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             $parameters_goles = [':cant'=>$goles_equipo_2[$j], ':dni'=>$jugadores2[$j]['dni']];
             $stmt_goles->execute($parameters_goles);
         }
+        //Comprobamos si ha sido el ultimo partido de la liga mirando si queda algun partido con goles en NULL
+        $stmt_final = $conexion->prepare("SELECT * FROM partido WHERE goles_1 IS NULL AND liga_edicion = (select MAX(edicion) from liga)");
+        $stmt_final->execute();
+        $partidos_rest = $stmt_final->fetchAll(PDO::FETCH_ASSOC);
+        //Y si es asi, guardamos el ganador de esa liga
+        if(!$partidos_rest) {
+            $stmt_ganador = $conexion->prepare("select P.equipo_nombre as equipo, P.liga_edicion as liga from pertenece P, equipo E where E.puntos = (select Max(puntos) FROM equipo) and P.equipo_nombre = E.nombre AND P.liga_edicion = (select MAX(edicion) from liga)");
+            $stmt_ganador->execute();
+            $ganador = $stmt_ganador->fetchAll(PDO::FETCH_ASSOC);
+            //Subimos ese ganador a la tabla GANADOR
+            $stmt_subir_ganador = $conexion->prepare("INSERT INTO ganador VALUES(:liga, :equipo)");
+            $parameters_subir = [':liga'=>$ganador[0]['liga'], ':equipo'=>$ganador[0]['equipo']];
+            $stmt_subir_ganador->execute($parameters_subir);
+            //Y reiniciamos las puntuaciones de los equipos a -1
+            $stmt_reiniciar = $conexion->prepare("UPDATE equipo SET puntos = -1 WHERE puntos>-1");
+            $stmt_reiniciar->execute();
+        }
 
     }
+    //Recogemos de la base de datos los datos que necesitamos para mostrar por pantalla el partido
+    //Descargamos los datos del partido
     if($_SESSION['entidad'] == 'jugador') {
         $stmt = $conexion->prepare("SELECT * FROM partido WHERE (equipo_nombre_1 = :equipo OR equipo_nombre_2 = :equipo) AND fecha = :fecha");
         $parameters = [':equipo'=>$usuario->getEquipo(), ':fecha'=>$_SESSION['fecha']];
@@ -68,6 +96,7 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
     }
     $stmt->execute($parameters);
     $partido = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //Los datos de los equipos
     $stmt_eq = $conexion->prepare("SELECT * FROM equipo WHERE nombre = :nombre");
     $parameters_eq1 = [':nombre'=>$partido[0]['equipo_nombre_1']];
     $parameters_eq2 = [':nombre'=>$partido[0]['equipo_nombre_2']];
@@ -75,6 +104,7 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
     $equipo1 = $stmt_eq->fetchAll(PDO::FETCH_ASSOC);
     $stmt_eq->execute($parameters_eq2);
     $equipo2 = $stmt_eq->fetchAll(PDO::FETCH_ASSOC);
+    //Y los del arbitro por si entraramos desde la cuenta de un jugador
     $stmt_ref = $conexion->prepare("SELECT * FROM arbitro WHERE dni = :dni");
     $parameters_ref = [':dni'=>$partido[0]['arbitro_dni']];
     $stmt_ref->execute($parameters_ref);

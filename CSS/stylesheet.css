@@ -377,6 +377,8 @@ body {
     padding:0;
     width: 100px;
     height: 100px;
+    max-height: 100px;
+    max-width: 100px;
     vertical-align: top;
     align-items: center;
 }
@@ -499,4 +501,26 @@ body {
     padding-right: 20px;
     vertical-align: top;
     padding-top: 40px;
+}
+#confirmar_amon {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    top: 25%;
+    border: 1px solid darkgrey;
+    z-index: 10;
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0,0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    min-width: 400px;
+    text-align: center;
+    padding: 15px 30px;
+}
+#confirmar_amon form {
+    height:0;
+    margin:0;
+    padding:0;
+}
+#confirmar_amon td {
+    padding-left: 25px;
+    padding-right: 25px;
 }

@@ -46,4 +46,6 @@
     $i_eliminar_cuenta = ["You chose to delete your account.", "Do you wish to continue?"];
     $i_apuntar_liga = ['You chose to add your team (', ') to the ', ' edition of DeporIan league.', 'Do you wish to continue?'];
     $i_error_apuntar = ['ERROR', 'You can not join an ongoing league.', 'Try again after '];
+    $i_error_amonestar = "The user doesn't have a team to admonish.";
+    $i_amonestar_btn = "Admonish";
 ?>

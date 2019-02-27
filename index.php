@@ -33,7 +33,7 @@ if (isset($_POST['orden'])) {
             $stmt_pre->execute($parameters_pre);
             $team = $stmt_pre->fetchAll(PDO::FETCH_ASSOC);
             if (!$team) {
-                $stmt = $conexion->prepare("INSERT INTO equipo(nombre, logo, fecha) VALUES (:nombre, :logo, CURRENT_TIME());");
+                $stmt = $conexion->prepare("INSERT INTO equipo(nombre, logo, fecha, puntos) VALUES (:nombre, :logo, CURRENT_TIME(), -1);");
                 if ($_FILES['su_file']['size'] == 0) {
                     $rutaImagen = "IMGs\\\\generic.png";
                 } else {

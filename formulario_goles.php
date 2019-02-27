@@ -22,8 +22,8 @@ if(isset($_POST['equipos'])) {
         <table>
             <tr>
                 <td><img src="<?= $equipo1[0]['logo'] ?>" ><input type="hidden" value="<?= $equipo1[0]['nombre'] ?>" name="equipo1"></td>
-                <td><input type="text" name="goles1"</td>
-                <td><input type="text" name="goles2"</td>
+                <td><input type="text" name="goles1" value="0"</td>
+                <td><input type="text" name="goles2" value="0"</td>
                 <td><img src="<?= $equipo2[0]['logo'] ?>" ><input type="hidden" value="<?= $equipo2[0]['nombre'] ?>" name="equipo2"></td>
             </tr>
             <tr><td colspan="4"><hr></td></tr>

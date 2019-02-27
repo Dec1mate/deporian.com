@@ -7,17 +7,18 @@ $hoy = time();
 $mes = date("m", $hoy);
 $anyo = date("Y", $hoy);
 
+//Esta funcion recibe un valor $cont que corresponde con el dia en ese momento en milisegundos, un array de reservas y un array de partidos
 function obtenerDia(&$cont, $reservas, $partidos, $conexion) {
     $reservado = false;
     $partido = false;
-    // this is reservas
+    //Si el dia actual coincide con una reserva, el booleano $reservado pasa a ser true
     for ($k = 0; $k < count($reservas); $k++) {
         if (date("Y-m-d", $cont) == substr($reservas[$k]['fecha'], 0, 10)) {
             $reservado = true;
             break;
         }
     }
-    // this is partidos
+    //Si el dia actual coincide con un partido, el booleano $partido pasa a ser true
     for ($l = 0; $l < count($partidos); $l++) {
         if (date("Y-m-d", $cont) == substr($partidos[$l]['fecha'], 0, 10)) {
             $partido = true;
@@ -28,6 +29,7 @@ function obtenerDia(&$cont, $reservas, $partidos, $conexion) {
             break;
         }
     }
+    //Dependiendo si cualquiera de los dos booleanos es true, o ninguno de los dos, devuelve un tipo de <td> diferente
     if ($reservado == true) : ?>
         <td><a class="reservado" href="reserva.php"><p class="date"><?= date("j", $cont) ?></p><p>Reserva</p></a></td>
     <?php elseif ($partido == true) : ?>
@@ -52,11 +54,13 @@ function obtenerDia(&$cont, $reservas, $partidos, $conexion) {
 if(isset($_POST['accion'])) {
     $data = json_decode($_POST['accion'], true);
     if ($_SESSION['entidad'] == "arbitro") {
+        //Sacamos todos los partidos y reservas en los que esta el arbitro
         $stmt1 = $conexion->prepare("SELECT fecha, equipo_nombre_1, equipo_nombre_2, campo_id FROM partido WHERE arbitro_dni = :dni");
         $stmt2 = $conexion->prepare("SELECT fecha FROM reserva WHERE arbitro_dni = :dni");
         $parameters = [':dni' => $data['entity']];
 
     } else if ($_SESSION['entidad'] == "jugador") {
+        //Sacamos todos los partidos y reservas en los que juega el equipo de nuestro jugador
         $stmt1 = $conexion->prepare("SELECT fecha, equipo_nombre_1, equipo_nombre_2, campo_id FROM partido WHERE (equipo_nombre_1 = :equipo) OR (equipo_nombre_2 = :equipo)");
         $stmt2 = $conexion->prepare("SELECT fecha FROM reserva WHERE equipo_nombre = :equipo");
         $parameters = [':equipo' => $data['entity']];

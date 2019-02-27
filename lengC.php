@@ -46,4 +46,6 @@
     $i_eliminar_cuenta = ["Ha seleccionado eliminar su cuenta.", "Desea continuar?"];
     $i_apuntar_liga = ['Ha seleccionado apuntar a su equipo (', ') a la ', ' edicion de la liga DeporIan.', 'Desea continuar?'];
     $i_error_apuntar = ['ERROR', 'No puede apuntarse si ya hay una liga en marcha.', 'Vuelva a intentarlo a partir del '];
+    $i_error_amonestar = "El usuario no tiene ningún equipo amonestable.";
+    $i_amonestar_btn = "Amonestar";
 ?>
