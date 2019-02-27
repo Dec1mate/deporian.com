@@ -80,8 +80,14 @@ if(isset($_POST['comprobar'])) {
     $parameters2 = [':equipo'=>$data['tema']];
     $stmt2->execute($parameters2);
     $amonestaciones = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    $amonestado = false;
+    if(!$amonestaciones) {
+        if($amonestaciones[0]['fecha']<date("Y-m-d H:i:s", time() + 2592000)) {
+            $amonestado = true;
+        }
+    }
 
-    if ($amonestaciones[0]['fecha']<date("Y-m-d H:i:s", time() + 2592000)) {
+    if ($amonestado == true) {
         echo "amonestado";
     } else if(date("Y-m-d H:i:s", time() + 86400)<=$data['fech']) {
         if ($result) {

@@ -215,6 +215,7 @@ $data = file_get_contents($clave);
                                         parrafo.appendChild(texto);
                                         let boton1 = document.createElement('button');
                                         boton1.setAttribute('type', 'button');
+                                        boton1.setAttribute('id', 'aceptar');
                                         let texto_b1 = document.createTextNode("<?= $i_aceptar ?>");
                                         boton1.appendChild(texto_b1);
                                         divisor.appendChild(parrafo);
