@@ -130,7 +130,7 @@ if(isset($_POST['cambios'])) {
 
         function eliminarCuenta() {
             document.getElementsByTagName('form')[2].action = "index.php";
-            document.getElementsByTagName('input')[9].name = "eliminar";
+            document.getElementsByTagName('input')[10].name = "eliminar";
             document.getElementsByTagName('form')[2].submit();
         }
 

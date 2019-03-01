@@ -99,6 +99,73 @@ if (isset($_POST['orden'])) {
     }
 }
 if(isset($_POST['eliminar'])) {
+    if($_SESSION['entidad']=="arbitro") {
+        //Si es un arbitro el que queremos eliminar comprobaremos los partidos que pita y se los asignaremos a otros arbitros
+        //Elegimos los arbitros que no son el
+        $stmt_arbit = $conexion->prepare("SELECT dni FROM arbitro WHERE dni<>:dni");
+        $parameters_arbit = [':dni'=>$_SESSION['dni']];
+        $stmt_arbit->execute($parameters_arbit);
+        $arbitros = $stmt_arbit->fetchAll(PDO::FETCH_ASSOC);
+        //Elegimos los partidos del arbitro a borrar
+        $stmt_partidos_arbitro = $conexion->prepare("SELECT * FROM partido WHERE arbitro_dni = :dni");
+        $parameters_partidos_arbitro = [':dni'=>$_SESSION['dni']];
+        $stmt_partidos_arbitro->execute($parameters_partidos_arbitro);
+        $partidos_arbitro = $stmt_partidos_arbitro->fetchAll(PDO::FETCH_ASSOC);
+
+        //Elegimos las reservas del arbitro a borrar
+        $stmt_reservas_arbitro = $conexion->prepare("SELECT * FROM reserva WHERE arbitro_dni = :dni");
+        $parameters_reservas_arbitro = [':dni'=>$_SESSION['dni']];
+        $stmt_reservas_arbitro->execute($parameters_reservas_arbitro);
+        $reservas_arbitro = $stmt_reservas_arbitro->fetchAll(PDO::FETCH_ASSOC);
+
+        //Elegimos las amonestaciones del arbitro a borrar
+        $stmt_amonestaciones_arbitro = $conexion->prepare("SELECT * FROM amonesta WHERE arbitro_dni = :dni");
+        $parameters_amonestaciones_arbitro = [':dni'=>$_SESSION['dni']];
+        $stmt_amonestaciones_arbitro->execute($parameters_amonestaciones_arbitro);
+        $amonestaciones_arbitro = $stmt_amonestaciones_arbitro->fetchAll(PDO::FETCH_ASSOC);
+
+        //Preparamos los statements
+        $stmt_update = $conexion->prepare("UPDATE partido SET arbitro_dni = :arbitro2 WHERE arbitro_dni = :arbitro1");
+        $stmt_update2 = $conexion->prepare("UPDATE reserva SET arbitro_dni = :arbitro2 WHERE arbitro_dni = :arbitro1");
+        $stmt_update3 = $conexion->prepare("UPDATE amonesta SET arbitro_dni = :arbitro2 WHERE arbitro_dni = :arbitro1");
+        for($i=0; $i<count($partidos_arbitro); $i++) {
+            do {
+                //Sacamos un arbitro aleatorio, y comprobamos si ese arbitro no pita otro partido a la misma hora
+                $arbitro = $arbitros[rand(0, count($arbitros)-1)];
+                $stmt_comprobar = $conexion->prepare("SELECT * FROM partido WHERE fecha = :fecha AND arbitro_dni = :dni");
+                $parameters_comprobar = [':fecha'=>$partidos_arbitro[$i]['fecha'], ':dni'=>$arbitro['dni']];
+                $stmt_comprobar->execute($parameters_comprobar);
+                $partido_elegible = $stmt_comprobar->fetchAll(PDO::FETCH_ASSOC);
+            } while(!empty($partido_elegible));
+            //Y cuando no encontremos uno que pite a esa misma hora le asignamos ese partido
+            $parameters_update = [':arbitro2'=>$arbitro['dni'], ':arbitro1'=>$_SESSION['dni']];
+            $stmt_update->execute($parameters_update);
+        }
+
+        for($j=0; $j<count($reservas_arbitro); $j++) {
+            do {
+                //Sacamos un arbitro aleatorio, y comprobamos si ese arbitro no pita otro partido a la misma hora
+                $arbitro = $arbitros[rand(0, count($arbitros)-1)];
+                $stmt_comprobar = $conexion->prepare("SELECT * FROM reserva WHERE fecha = :fecha AND arbitro_dni = :dni");
+                $parameters_comprobar = [':fecha'=>$reservas_arbitro[$j]['fecha'], ':dni'=>$arbitro['dni']];
+                $stmt_comprobar->execute($parameters_comprobar);
+                $partido_elegible = $stmt_comprobar->fetchAll(PDO::FETCH_ASSOC);
+            } while(!empty($partido_elegible));
+            //Y cuando no encontremos uno que pite a esa misma hora le asignamos esa reserva
+            $parameters_update = [':arbitro2'=>$arbitro['dni'], ':arbitro1'=>$_SESSION['dni']];
+            $stmt_update2->execute($parameters_update);
+        }
+        //Asignamos un arbitro aleatorio para cada amonestacion
+        for($k=0; $k<count($amonestaciones_arbitro); $k++) {
+            $arbitro = $arbitros[rand(0, count($arbitros)-1)];
+            $parameters_update = [':arbitro2'=>$arbitro['dni'], ':arbitro1'=>$_SESSION['dni']];
+            $stmt_update3->execute($parameters_update);
+        }
+
+    }
+
+
+    //Finalmente eliminamos el usuario
     $stmt = $conexion->prepare("DELETE FROM ".$_SESSION['entidad']." WHERE :dni = dni");
     $parameters = [':dni'=>$_SESSION['dni']];
     $stmt->execute($parameters);

@@ -1,7 +1,6 @@
 <?php
 require_once "Nodo.php";
 require_once "Lista.php";
-require_once "../metodos.php";
 /**
  * Created by PhpStorm.
  * User: ianmo
