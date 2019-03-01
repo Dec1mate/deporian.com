@@ -18,75 +18,82 @@ if (isset($_POST['orden'])) {
         $stmt->execute($parameters);
         $usuario = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($usuario)) {
-            echo "ERROR dni"; //DNI ERRONEO
+            echo "<script type='text/javascript'>alert('ERROR! El DNI no es correcto');</script>";
         } else if (password_verify($_POST['li_pass'], $usuario[0]['contrasenya'])) {
             $_SESSION['dni'] = $usuario[0]['dni'];
             $_SESSION['entidad'] = $_POST['entidad'];
         } else {
-            echo "ERROR pass"; //CONTRASEÑA ERRONEA
+            echo "<script type='text/javascript'>alert('ERROR! La contrasenya no es correcta');</script>";
         }
 
     } else if ($_POST['orden'] == 'signup') {           //REGISTRARSE
         if ($_POST['entidad'] == "equipo") {
-            $stmt_pre = $conexion->prepare("SELECT nombre FROM equipo WHERE nombre = :nombre");
-            $parameters_pre = [':nombre' => $_POST['su_name']];
-            $stmt_pre->execute($parameters_pre);
-            $team = $stmt_pre->fetchAll(PDO::FETCH_ASSOC);
-            if (!$team) {
-                $stmt = $conexion->prepare("INSERT INTO equipo(nombre, logo, fecha, puntos) VALUES (:nombre, :logo, CURRENT_TIME(), -1);");
-                if ($_FILES['su_file']['size'] == 0) {
-                    $rutaImagen = "IMGs\\\\generic.png";
-                } else {
-                    $rutaImagen = 'IMGs\\\\equipos\\\\' . $_FILES['su_file']['name'];
-                    if (!((strpos($_FILES['su_file']['type'], 'png') || strpos($_FILES['su_file']['type'], 'jpg') || strpos($_FILES['su_file']['type'], 'jpeg')))) {
-                        echo("La extension no es correcta.");
-                    } else if (is_file($rutaImagen) === true) {
-                        $idUnico = time();
-                        $nombreArchivo = $idUnico . '_' . $_FILES['su_file']['name'];
-                        $rutaImagen = 'IMGs\\\\equipos\\\\' . $nombreArchivo;
+            if($_POST['su_name']!="") {
+                $stmt_pre = $conexion->prepare("SELECT nombre FROM equipo WHERE nombre = :nombre");
+                $parameters_pre = [':nombre' => $_POST['su_name']];
+                $stmt_pre->execute($parameters_pre);
+                $team = $stmt_pre->fetchAll(PDO::FETCH_ASSOC);
+                if (!$team) {
+                    $stmt = $conexion->prepare("INSERT INTO equipo(nombre, logo, fecha, puntos) VALUES (:nombre, :logo, CURRENT_TIME(), -1);");
+                    if ($_FILES['su_file']['size'] == 0) {
+                        $rutaImagen = "IMGs\\\\generic.png";
+                    } else {
+                        $rutaImagen = 'IMGs\\\\equipos\\\\' . $_FILES['su_file']['name'];
+                        if (!((strpos($_FILES['su_file']['type'], 'png') || strpos($_FILES['su_file']['type'], 'jpg') || strpos($_FILES['su_file']['type'], 'jpeg')))) {
+                            echo("La extension no es correcta.");
+                        } else if (is_file($rutaImagen) === true) {
+                            $idUnico = time();
+                            $nombreArchivo = $idUnico . '_' . $_FILES['su_file']['name'];
+                            $rutaImagen = 'IMGs\\\\equipos\\\\' . $nombreArchivo;
+                        }
+                        move_uploaded_file($_FILES['su_file']['tmp_name'], $rutaImagen);
                     }
-                    move_uploaded_file($_FILES['su_file']['tmp_name'], $rutaImagen);
-                }
-                $parameters = [':nombre' => $_POST['su_name'], ':logo' => $rutaImagen];
-            }
-            $stmt->execute($parameters);
-
-        } else {
-            $stmt_pre = $conexion->prepare("SELECT * FROM ".$_POST['entidad']." WHERE :dni = dni");
-            $parameters_pre = [':dni' => $_POST['su_dni']];
-            $stmt_pre->execute($parameters_pre);
-            $usuario = $stmt_pre->fetchAll(PDO::FETCH_ASSOC);
-            if (empty($usuario)) {
-                if($_POST['entidad'] == "jugador") {
-                    $stmt = $conexion->prepare("INSERT INTO jugador(nombre, dni, equipo, edad, altura, foto, contrasenya) VALUES (:nombre, :dni, :equipo, :edad, :altura, :foto, :contrasenya)");
-                    $carpeta = "jugadores";
-                } else {
-                    $stmt = $conexion->prepare("INSERT INTO arbitro(nombre, dni, edad, altura, foto, contrasenya) VALUES (:nombre, :dni, :edad, :altura, :foto, :contrasenya)");
-                    $carpeta = "arbitros";
-                }
-                if ($_FILES['su_file']['size'] != 0) {
-                    $rutaImagen = 'IMGs\\\\'.$carpeta.'\\\\' . $_FILES['su_file']['name'];
-                    if (!((strpos($_FILES['su_file']['type'], 'png') || strpos($_FILES['su_file']['type'], 'jpg') || strpos($_FILES['su_file']['type'], 'jpeg')))) {
-                        echo("La extension no es correcta.");
-                    } else if (is_file($rutaImagen) === true) {
-                        $idUnico = time();
-                        $nombreArchivo = $idUnico . '_' . $_FILES['su_file']['name'];
-                        $rutaImagen = 'IMGs\\\\'.$carpeta.'\\\\' . $nombreArchivo;
-                    }
-                    move_uploaded_file($_FILES['su_file']['tmp_name'], $rutaImagen);
-                } else {
-                    $rutaImagen = "IMGs\\\\generic.png";
-                }
-                if($_POST['entidad'] == "jugador") {
-                    $parameters = [':nombre' => $_POST['su_name'], ':dni' => $_POST['su_dni'], ':equipo' => $_POST['su_team'], ':edad' => $_POST['su_age'], ':altura' => $_POST['su_height'], ':foto' => $rutaImagen, ':contrasenya' => password_hash($_POST['su_pass'], PASSWORD_DEFAULT, ['cost' => 10])];
-                } else {
-                    $parameters = [':nombre' => $_POST['su_name'], ':dni' => $_POST['su_dni'], ':edad' => $_POST['su_age'], ':altura' => $_POST['su_height'], ':foto' => $rutaImagen, ':contrasenya' => password_hash($_POST['su_pass'], PASSWORD_DEFAULT, ['cost' => 10])];
+                    $parameters = [':nombre' => $_POST['su_name'], ':logo' => $rutaImagen];
                 }
                 $stmt->execute($parameters);
-                $usuario[0]['nombre'] = $_POST['su_name'];
-                $usuario[0]['foto'] = $rutaImagen;
-                $_SESSION['dni'] = $_POST['su_dni'];
-                $_SESSION['entidad'] = $_POST['entidad'];
+            } else {
+                echo "<script type='text/javascript'>alert('ERROR! No puedes dejar campos vacios');</script>";
+            }
+        } else {
+            if($_POST['su_dni']!="" && $_POST['su_team']!="" && $_POST['su_pass']!="" && $_POST['su_pass_conf']!= "") {
+                $stmt_pre = $conexion->prepare("SELECT * FROM ".$_POST['entidad']." WHERE :dni = dni");
+                $parameters_pre = [':dni' => $_POST['su_dni']];
+                $stmt_pre->execute($parameters_pre);
+                $usuario = $stmt_pre->fetchAll(PDO::FETCH_ASSOC);
+                if (empty($usuario)) {
+                    if($_POST['entidad'] == "jugador") {
+                        $stmt = $conexion->prepare("INSERT INTO jugador(nombre, dni, equipo, edad, altura, foto, contrasenya) VALUES (:nombre, :dni, :equipo, :edad, :altura, :foto, :contrasenya)");
+                        $carpeta = "jugadores";
+                    } else {
+                        $stmt = $conexion->prepare("INSERT INTO arbitro(nombre, dni, edad, altura, foto, contrasenya) VALUES (:nombre, :dni, :edad, :altura, :foto, :contrasenya)");
+                        $carpeta = "arbitros";
+                    }
+                    if ($_FILES['su_file']['size'] != 0) {
+                        $rutaImagen = 'IMGs\\\\'.$carpeta.'\\\\' . $_FILES['su_file']['name'];
+                        if (!((strpos($_FILES['su_file']['type'], 'png') || strpos($_FILES['su_file']['type'], 'jpg') || strpos($_FILES['su_file']['type'], 'jpeg')))) {
+                            echo("La extension no es correcta.");
+                        } else if (is_file($rutaImagen) === true) {
+                            $idUnico = time();
+                            $nombreArchivo = $idUnico . '_' . $_FILES['su_file']['name'];
+                            $rutaImagen = 'IMGs\\\\'.$carpeta.'\\\\' . $nombreArchivo;
+                        }
+                        move_uploaded_file($_FILES['su_file']['tmp_name'], $rutaImagen);
+                    } else {
+                        $rutaImagen = "IMGs\\\\generic.png";
+                    }
+                    if($_POST['entidad'] == "jugador") {
+                        $parameters = [':nombre' => $_POST['su_name'], ':dni' => $_POST['su_dni'], ':equipo' => $_POST['su_team'], ':edad' => $_POST['su_age'], ':altura' => $_POST['su_height'], ':foto' => $rutaImagen, ':contrasenya' => password_hash($_POST['su_pass'], PASSWORD_DEFAULT, ['cost' => 10])];
+                    } else {
+                        $parameters = [':nombre' => $_POST['su_name'], ':dni' => $_POST['su_dni'], ':edad' => $_POST['su_age'], ':altura' => $_POST['su_height'], ':foto' => $rutaImagen, ':contrasenya' => password_hash($_POST['su_pass'], PASSWORD_DEFAULT, ['cost' => 10])];
+                    }
+                    $stmt->execute($parameters);
+                    $usuario[0]['nombre'] = $_POST['su_name'];
+                    $usuario[0]['foto'] = $rutaImagen;
+                    $_SESSION['dni'] = $_POST['su_dni'];
+                    $_SESSION['entidad'] = $_POST['entidad'];
+                }
+            } else {
+                echo "<script type='text/javascript'>alert('ERROR! No puedes dejar campos vacios');</script>";
             }
         }
     }

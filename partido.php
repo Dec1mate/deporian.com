@@ -69,6 +69,14 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             $parameters_goles = [':cant'=>$goles_equipo_2[$j], ':dni'=>$jugadores2[$j]['dni']];
             $stmt_goles->execute($parameters_goles);
         }
+        //Ponemos un tweet con el resultado
+        $texto = "El partido que ha enfrentado a ".$_POST['equipo1']." vs ".$_POST['equipo2']." ha finalizado con un resultado de ".$_POST['goles1']." a ".$_POST['goles2'];
+        $settings = array(
+            'consumer_key'=>'72xgvwIlNfSotN66afqZGjASG',
+            'consumer_secret'=>'NbXofTGJ78kSoRoPoMFIuiJ1ziwi1shfuE8ORwiKhtTN9k0eXY',
+            'oauth_access_token'=>'1092417797588766720-tSwJjv0rArKBDAiGdWsJxWdZ4K0Uu5',
+            'oauth_access_token_secret'=>'WgQMDEOpJ77k0Vxb4QNZyrzkqqXdO5g0VNIhapbi3weX5');
+        //publicarTweet($settings, $texto);
         //Comprobamos si ha sido el ultimo partido de la liga mirando si queda algun partido con goles en NULL
         $stmt_final = $conexion->prepare("SELECT * FROM partido WHERE goles_1 IS NULL AND liga_edicion = (select MAX(edicion) from liga)");
         $stmt_final->execute();
@@ -85,8 +93,15 @@ if(isset($_POST['fecha']) || isset($_SESSION['fecha'])) {
             //Y reiniciamos las puntuaciones de los equipos a -1
             $stmt_reiniciar = $conexion->prepare("UPDATE equipo SET puntos = -1 WHERE puntos>-1");
             $stmt_reiniciar->execute();
+            //Y ponemos un tweet
+            $texto = "La ".$ganador[0]['liga']." edicion de la liga DeporIan ha terminado con el equipo ".$ganador[0]['equipo']." como ganador!";
+            $settings = array(
+                'consumer_key'=>'72xgvwIlNfSotN66afqZGjASG',
+                'consumer_secret'=>'NbXofTGJ78kSoRoPoMFIuiJ1ziwi1shfuE8ORwiKhtTN9k0eXY',
+                'oauth_access_token'=>'1092417797588766720-tSwJjv0rArKBDAiGdWsJxWdZ4K0Uu5',
+                'oauth_access_token_secret'=>'WgQMDEOpJ77k0Vxb4QNZyrzkqqXdO5g0VNIhapbi3weX5');
+            //publicarTweet($settings, $texto);
         }
-
     }
     //Recogemos de la base de datos los datos que necesitamos para mostrar por pantalla el partido
     //Descargamos los datos del partido

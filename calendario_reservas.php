@@ -5,7 +5,6 @@ require_once "metodos.php";
 if(!isset($_SESSION['dni'])) {
     header("Location: index.php");
 }
-
 $conexion = Connection::make();
 $dias = [];
 $dias_db = [];
@@ -39,6 +38,10 @@ if (isset($_POST['accion'])) {
         <tr>
             <?php for($j=0; $j<count($dias_db); $j++) {
                 $date = $dias_db[$j]." ".$horas[$i];
+                //A la hora de crear la tabla comprobamos 3 cosas:
+                //Si el campo esta reservado ese dia ya por nosotros
+                //Si el campo esta reservado por otro equipo
+                //Si el dia cae en sabado o domingo
                 $reservado1 = false;
                 $reservado2 = false;
                 $festivo = false;
@@ -73,6 +76,10 @@ if (isset($_POST['accion'])) {
 }
 
 if(isset($_POST['comprobar'])) {
+    //Aqui comprobamos 3 opciones mas para reservar:
+    //Si estamos amonestados
+    //Si la reserva esta fuera del plazo de minimo 24h de antelacion
+    //Si ya tenemos una reserva para el otro campo el mismo dia a la misma hora
     $data = json_decode($_POST['comprobar'], true);
 
     $stmt = $conexion->prepare("SELECT * FROM reserva WHERE campo_id = :id AND equipo_nombre = :equipo AND fecha = :fecha");
@@ -90,7 +97,6 @@ if(isset($_POST['comprobar'])) {
             $amonestado = true;
         }
     }
-
     if ($amonestado == true) {
         echo "amonestado";
     } else if(date("Y-m-d H:i:s", time() + 86400)<=$data['fech']) {

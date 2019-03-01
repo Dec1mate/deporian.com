@@ -25,6 +25,8 @@ if(!isset($_SESSION['dni'])) {
             httpRequest.onreadystatechange = function() {
                 if(httpRequest.readyState===4) {
                     if(httpRequest.status === 200) {
+                        //Consultamos si hay alguna liga empezada o no
+                        //En caso de que no, apuntamos a nuestro equipo a la liga siguiente
                         if(httpRequest.responseText == "opcion1") {
                             let divisor = document.createElement('div');
                             divisor.setAttribute('id', 'confirmar');
@@ -53,6 +55,7 @@ if(!isset($_SESSION['dni'])) {
 
                             document.getElementsByTagName('button')[2].onclick = apuntarseLiga;
                             document.getElementsByTagName('button')[3].onclick = desconfirmar;
+                        //En caso de que si, le decimos que no podrá apuntarse hasta la fecha en que acabe la liga
                         } else {
                             let divisor = document.createElement('div');
                             divisor.setAttribute('id', 'confirmar');

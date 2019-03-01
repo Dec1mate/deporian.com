@@ -7,7 +7,8 @@ if(!isset($_SESSION['dni']) && !isset($_POST['equipos'])) {
 require_once "database/Connection.php";
 if(isset($_POST['equipos'])) {
     $data = json_decode($_POST['equipos'], true);
-
+    //Buscamos los jugadores de ambos equipos ordenandolos por nombre
+    //Esto nos facilita a la hora de sumarles los goles el hecho de pasarselos por orden alfabetico
     $conexion = Connection::make();
     $stmt = $conexion->prepare("SELECT * FROM equipo WHERE nombre = :equipo");
     $stmt2 = $conexion->prepare("SELECT nombre FROM jugador WHERE equipo = :equipo ORDER BY nombre");

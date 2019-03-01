@@ -31,7 +31,6 @@ if(isset($_POST['opcion'])) {
 
 $clave = "http://api.openweathermap.org/data/2.5/forecast?lat=39.594189&lon=-0.54474&APPID=d0cb0d8b429769a6e1105782251c99aa&units=metric&lang=es";
 $data = file_get_contents($clave);
-//$datos = json_decode($data);
 
 ?>
 <!doctype html>
@@ -137,6 +136,7 @@ $data = file_get_contents($clave);
                             if(httpRequest.readyState===4) {
                                 if (httpRequest.status === 200) {
                                     if (httpRequest.responseText === 'reservable') {
+                                        //Si el equipo puede reservar el campo
                                         let divisor = document.createElement('div');
                                         divisor.setAttribute('id', 'confirmar');
                                         let difuminador = document.createElement('div');
@@ -172,6 +172,7 @@ $data = file_get_contents($clave);
                                         document.getElementsByTagName('button')[2].onclick = confirmarFecha;
                                         document.getElementsByTagName('button')[3].onclick = desconfirmarReserva;
                                     } else if(httpRequest.responseText === "unreservable") {
+                                        //Si el equipo tiene una reserva el mismo dia a la misma hora en otro campo
                                         let divisor = document.createElement('div');
                                         divisor.setAttribute('id', 'confirmar');
                                         let difuminador = document.createElement('div');
@@ -191,6 +192,7 @@ $data = file_get_contents($clave);
                                         document.body.appendChild(divisor);
                                         document.getElementsByTagName('button')[2].onclick = desconfirmarReserva;
                                     } else if (httpRequest.responseText === 'amonestado') {
+                                        //Si el equipo esta amonestado
                                         let divisor = document.createElement('div');
                                         divisor.setAttribute('id', 'confirmar');
                                         let difuminador = document.createElement('div');
@@ -209,6 +211,7 @@ $data = file_get_contents($clave);
                                         document.body.appendChild(divisor);
                                         document.getElementsByTagName('button')[2].onclick = desconfirmarReserva;
                                     } else if (httpRequest.responseText === 'f_plazo') {
+                                        //Si la reserva esta fuera de plazo (menos de 24h)
                                         let divisor = document.createElement('div');
                                         divisor.setAttribute('id', 'confirmar');
                                         let difuminador = document.createElement('div');

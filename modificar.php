@@ -21,6 +21,7 @@ if (isset($_SESSION['entidad'])) {
         $usuario = $stmt->fetch();
     }
 }
+//Dependiendo de los campos que hayamos rellenado modificaremos segun que dato del perfil del usuario
 if(isset($_POST['cambios'])) {
     if($_POST['new_name']!="") {
         $usuario->updateNombre($_POST['new_name']);

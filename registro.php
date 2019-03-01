@@ -6,6 +6,7 @@ if(!isset($_SESSION['dni']) && !isset($_POST['accion'])) {
     header("Location: index.php");
 }
 if(isset($_POST['accion'])) {
+    //Con esto sacamos la lista de equipos que estan actualmente registrados en la base de datos
     $conexion = Connection::make();
     if($_POST['accion']==='desplegable') {
         $stmt = $conexion->prepare("SELECT nombre FROM equipo");
