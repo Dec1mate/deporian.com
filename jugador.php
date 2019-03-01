@@ -1,9 +1,16 @@
-    <form action="usuario.php" method="post">
+<?php
+require_once "metodos.php";
+if(!isset($_SESSION['dni'])) {
+    header("Location: index.php");
+}
+?>
+<form action="usuario.php" method="post">
         <input type="button" value="<?= $i_apuntarse_boton ?>">
         <input type="button" value="<?= $i_reservas_boton ?>">
         <input type="button" value="<?= $i_modificar ?>">
         <input type="hidden" name="opciones_jugador">
     </form>
+    <img src="IMGs/banner.png" id="banner">
     <img src='<?= $equipo[0]['logo'] ?>' id="equipo"/>
 
     <script>

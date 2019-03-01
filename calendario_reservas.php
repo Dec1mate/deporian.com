@@ -2,12 +2,16 @@
 session_start();
 require_once "database/Connection.php";
 require_once "metodos.php";
+if(!isset($_SESSION['dni'])) {
+    header("Location: index.php");
+}
+
 $conexion = Connection::make();
 $dias = [];
 $dias_db = [];
 $dias_sem = [];
 //Sacamos la fecha actual y los 5 dias siguientes
-$hoy = time() + 86400;
+$hoy = time();
 $horas = ['15:00:00', '18:00:00', '21:00:00'];
 for ($i=0; $i<5; $i++) {
     array_push($dias, date("d/m/Y", $hoy));

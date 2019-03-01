@@ -1,3 +1,9 @@
+<?php
+require_once "metodos.php";
+if(!isset($_SESSION['dni'])) {
+    header("Location: index.php");
+}
+?>
 <form action="usuario.php" method="post">
     <input type="button" value="<?= $i_modificar ?>">
     <input type="button" value="<?= $i_amonestar_btn ?>">

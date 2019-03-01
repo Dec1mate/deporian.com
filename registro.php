@@ -1,5 +1,10 @@
 <?php
+session_start();
 require_once "database/Connection.php";
+require_once "metodos.php";
+if(!isset($_SESSION['dni']) && !isset($_POST['accion'])) {
+    header("Location: index.php");
+}
 if(isset($_POST['accion'])) {
     $conexion = Connection::make();
     if($_POST['accion']==='desplegable') {

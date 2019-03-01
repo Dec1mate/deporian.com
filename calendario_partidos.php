@@ -2,10 +2,15 @@
 session_start();
 require_once "database/Connection.php";
 require_once "metodos.php";
+if(!isset($_SESSION['dni'])) {
+    header("Location: index.php");
+}
 $conexion = Connection::make();
 $hoy = time();
 $mes = date("m", $hoy);
 $anyo = date("Y", $hoy);
+
+
 
 //Esta funcion recibe un valor $cont que corresponde con el dia en ese momento en milisegundos, un array de reservas y un array de partidos
 function obtenerDia(&$cont, $reservas, $partidos, $conexion) {

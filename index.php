@@ -104,6 +104,18 @@ if(isset($_POST['eliminar'])) {
 $stmt_partidos = $conexion->prepare("select * from equipo E, pertenece P, liga L where P.liga_edicion = L.edicion and E.nombre = P.equipo_nombre and L.edicion = (select MAX(edicion) from liga) order by puntos DESC");
 $stmt_partidos->execute();
 $teams_liga = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
+if(count($teams_liga)==12) {
+    $stmt_goleadores = $conexion->prepare("SELECT equipo, nombre, num_goles FROM jugador WHERE num_goles<>0 ORDER BY num_goles DESC LIMIT 20");
+    $stmt_goleadores->execute();
+    $goleadores = $stmt_goleadores->fetchAll(PDO::FETCH_ASSOC);
+    $stmt_jornada = $conexion->prepare("SELECT MIN(jornada_numero) as jornada FROM partido WHERE goles_1 IS NULL");
+    $stmt_jornada->execute();
+    $jornada = $stmt_jornada->fetch(PDO::FETCH_ASSOC);
+    $stmt_games = $conexion->prepare("SELECT * FROM partido WHERE jornada_numero = :jornada");
+    $parameters_games = [':jornada'=>$jornada['jornada']];
+    $stmt_games->execute($parameters_games);
+    $partidos_jornada = $stmt_games->fetchAll(PDO::FETCH_ASSOC);
+}
 
 ?>
 <!DOCTYPE html>
@@ -136,13 +148,27 @@ $teams_liga = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </div>
         <?php if(count($teams_liga)==12) :?>
-        <table id="liga">
-            <tr><th colspan="3"><?= $i_index_tabla_1 ?></th></tr>
-            <tr><td colspan="2"><?= $i_index_tabla_2 ?></td><td><?= $i_index_tabla_3 ?></td></tr>
-            <?php foreach ($teams_liga as $team):?>
-            <tr><td><img src="<?= $team['logo'] ?>"></td><td><?= $team['nombre'] ?></td><td><?= $team['puntos'] ?></td></tr>
-            <?php endforeach; ?>
-        </table>
+        <div id="info_izda">
+            <table id="liga" align="center">
+                <tr><th colspan="3"><?= $i_index_tabla_1 ?></th></tr>
+                <tr><td colspan="2"><?= $i_index_tabla_2 ?></td><td><?= $i_index_tabla_3 ?></td></tr>
+                <?php foreach ($teams_liga as $team):?>
+                    <tr><td><img src="<?= $team['logo'] ?>"></td><td><?= $team['nombre'] ?></td><td><?= $team['puntos'] ?></td></tr>
+                <?php endforeach; ?>
+            </table>
+            <h2>Partidos siguiente jornada</h2>
+            <table id="jornada" align="center">
+                <tr><td>Fecha</td><td>Partido</td><td>Campo</td></tr>
+                <?php foreach ($partidos_jornada as $partido) :?>
+                    <tr>
+                        <td><?= $partido['fecha'] ?></td>
+                        <td><?= $partido['equipo_nombre_1'] ?> VS <?= $partido['equipo_nombre_2'] ?></td>
+                        <td><?= $partido['campo_id'] ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        </div>
+
         <?php else: ?>
         <div id="apuntate"><img src="IMGs/apuntate.png"></div>
         <?php endif; ?>
@@ -154,6 +180,18 @@ $teams_liga = $stmt_partidos->fetchAll(PDO::FETCH_ASSOC);
             <br><h2><?= $i_index_h22 ?></h2>
             <img width="49%" src="IMGs/exterior.jpg"/>
             <img width="49%" src="IMGs/interior.jpg"/>
+            <?php if(count($teams_liga)==12): ?>
+            <h2>20 máx. goleadores de la liga actual</h2>
+            <table id="goleadores" align="center">
+                <?php foreach ($goleadores as $goleador): ?>
+                <tr>
+                    <td><?= $goleador['equipo'] ?></td>
+                    <td><?= $goleador['nombre'] ?></td>
+                    <td><?= $goleador['num_goles'] ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </table>
+            <?php endif; ?>
         </div>
     </div>
     <script>

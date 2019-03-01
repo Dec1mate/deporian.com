@@ -1,5 +1,10 @@
 <?php
+session_start();
 require_once "database/Connection.php";
+require_once "metodos.php";
+if(!isset($_SESSION['dni'])) {
+    header("Location: index.php");
+}
 $conexion = Connection::make();
 //Busca las ligas existentes
 $stmt1 = $conexion->prepare("SELECT * FROM liga");

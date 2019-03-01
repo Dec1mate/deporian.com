@@ -1,4 +1,9 @@
 <?php
+session_start();
+require_once "metodos.php";
+if(!isset($_SESSION['dni']) && !isset($_POST['equipos'])) {
+    header("Location: index.php");
+}
 require_once "database/Connection.php";
 if(isset($_POST['equipos'])) {
     $data = json_decode($_POST['equipos'], true);

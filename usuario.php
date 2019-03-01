@@ -3,6 +3,9 @@ session_start();
 require_once "database/Connection.php";
 require_once "metodos.php";
 require_once "twitter/TwitterAPIExchange.php";
+if(!isset($_SESSION['dni'])) {
+    header("Location: index.php");
+}
 $conexion = Connection::make();
 date_default_timezone_set('Europe/Madrid');
 if (isset($_SESSION['entidad'])) {
@@ -82,10 +85,12 @@ if (isset($_POST['opciones_jugador'])) {
             <?php if($_SESSION['entidad']=="jugador"):?>
             <h3><?= $usuario->getEquipo() ?> <img src='<?= $equipo[0]['logo'] ?>' height="20px"/></h3>
             <?php endif;?>
+            <p>DNI: <?= $usuario->getDni() ?></p>
+            <p>Altura: <?= $usuario->getAltura() ?></p>
+            <p>Edad: <?= $usuario->getEdad() ?></p>
         </div>
         <!-- AQUI VA EL CALENDARIO -->
         <div id="calendario">
-
         </div>
         <div id="<?= $_SESSION['entidad'] ?>">
             <?php if($_SESSION['entidad']=="jugador") {

@@ -3,6 +3,7 @@ require_once "database/Connection.php";
 require_once "entities/Jugador.php";
 require_once "entities/Arbitro.php";
 require_once "twitter/TwitterAPIExchange.php";
+
 $conexion = Connection::make();
 $ruta = "lengC.php";
 if (isset($_POST['lengua'])) {

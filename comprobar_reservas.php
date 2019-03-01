@@ -1,6 +1,10 @@
 <?php
 session_start();
 require_once "database/Connection.php";
+require_once "metodos.php";
+if(!isset($_SESSION['dni'])) {
+    header("Location: index.php");
+}
 $conexion = Connection::make();
 $hoy = date("Y-m-d H:i:s", time());
 //Selecciona las reservas vinculadas a un arbitro en las que no haya ningun equipo ya amonestado por ese arbitro en alguna de esas fechas

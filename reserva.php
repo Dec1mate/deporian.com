@@ -2,6 +2,9 @@
 session_start();
 date_default_timezone_set('Europe/Madrid');
 require_once "metodos.php";
+if(!isset($_SESSION['dni'])) {
+    header("Location: index.php");
+}
 
 $stmt1 = $conexion->prepare("SELECT * FROM ".$_SESSION['entidad']." WHERE dni = :dni");
 $parameters = [':dni'=>$_SESSION['dni']];
